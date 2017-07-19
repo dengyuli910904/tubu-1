@@ -4,21 +4,19 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateGroupmemberTable extends Migration
+class CreateGroupsFollowTable extends Migration
 {
     /**
-     * Run the migrations.
+     * 我关注的圈子
      *
      * @return void
      */
     public function up()
     {
-        Schema::create('groupmember', function (Blueprint $table) {
+        Schema::create('groups_follow', function (Blueprint $table) {
             $table->string('id')->uniqid();//采用uuid
-            $table->integer('role')->default(0);//成员角色 0 普通成员 1 副圈主
             $table->string('groups_id');//圈子id
-            $table->string('users_id');//用户id
-            $table->integer('status')->default(1);//用户状态 0 禁用 1启用
+            $table->string('user_id');//用户id
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateGroupmemberTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('groupmember');
+        Schema::dropIfExists('groups_follow');
     }
 }

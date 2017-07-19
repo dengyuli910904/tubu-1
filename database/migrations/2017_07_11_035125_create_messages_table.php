@@ -13,7 +13,14 @@ class CreateMessagesTable extends Migration
      */
     public function up()
     {
-        //
+        Schema::create('messages', function (Blueprint $table) {
+            $table->string('id')->uniqid();//采用uuid
+            $table->string('users_id');//用户id
+            $table->text('content')->nullable();//活动留言内容
+            $table->integer('status')->default(0);//默认活动状态，0 未发布状态
+            $table->string('activites_id');//活动id 
+            $table->timestamps();
+        });
     }
 
     /**
@@ -23,6 +30,6 @@ class CreateMessagesTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('messages');
     }
 }

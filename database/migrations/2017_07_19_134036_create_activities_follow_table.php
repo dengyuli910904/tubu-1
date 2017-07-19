@@ -4,24 +4,19 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateOrdersTable extends Migration
+class CreateActivitiesFollowTable extends Migration
 {
     /**
-     * 订单表
+     * 我关注的活动
      *
      * @return void
      */
     public function up()
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('activities_follow', function (Blueprint $table) {
             $table->string('id')->uniqid();//采用uuid
             $table->string('activities_id');//活动id
             $table->string('user_id');//用户id
-            $table->string('comment')->nullable();//备注
-            $table->string('ordernum')->nullable();//支付编号
-            $table->integer('status')->nullable();//z支付状态码
-            $table->string('title')->nullable();//订单标题
-            $table->integer('is_valid')->default(0);// 0 未验证，1已验证
             $table->timestamps();
         });
     }
@@ -33,6 +28,6 @@ class CreateOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('activities_follow');
     }
 }

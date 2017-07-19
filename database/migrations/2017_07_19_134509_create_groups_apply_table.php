@@ -4,21 +4,20 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateReplaiesTable extends Migration
+class CreateGroupsApplyTable extends Migration
 {
     /**
-     * 留言回复比表
+     * 圈子用户申请表
      *
      * @return void
      */
     public function up()
     {
-        Schema::create('replaies', function (Blueprint $table) {
+        Schema::create('groups_apply', function (Blueprint $table) {
             $table->string('id')->uniqid();//采用uuid
-            $table->string('users_id');//用户id
-            $table->text('content');//活动留言内容
-            $table->integer('status')->default(0);//默认活动状态，0 未发布状态
-            $table->string('messages_id');//留言id 
+            $table->string('groups_id');//活动id
+            $table->string('user_id');//用户id
+            $table->integer('status')->default(0);//申请状态 0 未审核 1审核通过 2 审核不通过
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreateReplaiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('replaies');
+        Schema::dropIfExists('groups_apply');
     }
 }

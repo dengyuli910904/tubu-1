@@ -21,7 +21,7 @@ class CreateActivitiesTable extends Migration
             $table->string('title');//活动标题
             $table->text('content')->nullable();//活动内容
             $table->text('cost_intro')->nullable();//活动费用说明
-            $table->integer('status')->default(1);//用户状态 0 禁用 1启用
+            $table->integer('is_able')->default(1);//活动状态 0 禁用 1启用
             $table->timestamp('starttime')->nullable();//活动开始时间
             $table->timestamp('endtime')->nullable();//活动结束时间
             $table->timestamp('enrol_starttime')->nullable();//活动报名开始时间

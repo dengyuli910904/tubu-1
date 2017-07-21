@@ -13,13 +13,13 @@ class CreateGroupmemberTable extends Migration
      */
     public function up()
     {
-        Schema::create('groupmember', function (Blueprint $table) {
-            $table->string('id')->uniqid();//采用uuid
-            $table->integer('role')->default(0);//成员角色 0 普通成员 1 副圈主
-            $table->string('groups_id');//圈子id
-            $table->string('users_id');//用户id
-            $table->integer('status')->default(1);//用户状态 0 禁用 1启用
-            $table->timestamps();
+        Schema::create('groupmember', function (Blueprint $t) {
+            $t->string('id')->uniqid();//采用uuid
+            $t->integer('role')->default(0);//成员角色 0 普通成员 1 副圈主
+            $t->string('groups_id');//圈子id
+            $t->string('users_id');//用户id
+            $t->integer('status')->default(1);//用户状态 0 禁用 1启用
+            $t->timestamps();
         });
     }
 

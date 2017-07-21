@@ -7,7 +7,7 @@ use Illuminate\Database\Migrations\Migration;
 class CreateActivitymembersTable extends Migration
 {
     /**
-     * Run the migrations.
+     * 活动成员表
      *
      * @return void
      */

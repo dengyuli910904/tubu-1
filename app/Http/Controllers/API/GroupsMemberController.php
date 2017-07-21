@@ -7,5 +7,8 @@ use App\Http\Controllers\Controller;
 
 class GroupsMemberController extends Controller
 {
-    //
+    /**
+     * 设置用户角色
+     */
+    
 }

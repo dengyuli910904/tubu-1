@@ -13,6 +13,13 @@ use UUID;
 class GroupsController extends Controller
 {
     /**
+     * 圈子列表，用于发布活动用
+     */
+    public function groups(Request $request){
+        $list = Groups::where('status','=','1')->select('id','name')->get();
+        return Common::returnResult(200,'获取成功',$list);
+    }
+    /**
      * 获取所有的圈子,圈子列表（首页）
      */
     public function list(Request $request){
@@ -50,7 +57,6 @@ class GroupsController extends Controller
     			// $data['member'] = array('users_id'=>$groups->users_id,);
     			//参与的用户
     			$idlist = GroupMember::where('groups_id','=',$request->input('id'))->select('users_id','role')->get();
-    			// $memberid = GroupMember::where('groups_id','=',$request->input('id'))->select('users_id')->get();
     			foreach ($idlist as $key => $value) {
     				switch ($value->role) {
     					case 0:
@@ -61,7 +67,6 @@ class GroupsController extends Controller
     						$deputyid = $deputyid.$value->id.($key === (count($idlist)-1):''?',');
     						break;
     				}
-    				// $userid = $value.($key === (count($idlist)-1):''?',');
     			}
     			// $userid = $userid.$groups->users_id;
 
@@ -121,5 +126,33 @@ class GroupsController extends Controller
 			return Common::returnResult(400,'创建失败',"");
 		}
     }
+
+    /**
+     * 获取圈子用户列表
+     */
+    public function members(Request $request){
+        $gourps = Groups::find($request->input('id'));
+        if(!empty($groups)){
+            $idlist = GroupMember::where('groups_id','=',$request->input('id'))->select('users_id','role')->get();
+            foreach ($idlist as $key => $value) {
+                switch ($value->role) {
+                    case 0:
+                        $memberid = $memberid.$value->id.($key === (count($idlist)-1):''?',');
+                        break;
+                    
+                    case 1:
+                        $deputyid = $deputyid.$value->id.($key === (count($idlist)-1):''?',');
+                        break;
+                }
+            }
+            // $userid = $userid.$groups->users_id;
+
+            $deputys = Users::where('id','in','('.$deputyid.')')->get();
+        }else{
+            return Common::returnResult(400,'该记录不存在',"");
+        }
+    }
+
+    
 
 }

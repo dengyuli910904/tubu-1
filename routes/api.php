@@ -16,3 +16,14 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+$api = app('Dingo\Api\Routing\Router');
+
+$api->version('v1', function ($api) {
+    $api->resource('group','App\API\GroupsController');
+});
+//圈子
+// Route::resource('group','GroupsController');
+// Route::group(['prefix'=>'groups'],function(Request $request){
+
+// });

@@ -14,3 +14,16 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Route::prefix('admin')
+//     ->namespace('Admin')
+//     ->group(base_path('routes/admin.php'));
+
+Route::prefix('api')
+    ->namespace('API')
+    ->group(base_path('routes/api.php'));
+
+Route::group(['namespace' => 'Common'],function(){
+    // Route::any('/upload','UeditorController@server');
+    Route::post('/fileupload','UeditorController@uploadimg');
+});

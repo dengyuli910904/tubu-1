@@ -109,9 +109,8 @@ class GroupsController extends Controller
     		return Common::returnResult(400,'参数不正确',"");
     	}
     }
-
     /**
-     * 创建圈子
+     * 创建圈子，发送到后台进行审核
      */
     public function create(Request $request){
     	$groups = new Groups();

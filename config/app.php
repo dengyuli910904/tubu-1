@@ -178,6 +178,17 @@ return [
         App\Providers\RouteServiceProvider::class,
         Dingo\Api\Provider\LaravelServiceProvider::class,
 
+        //文本编辑器
+        Stevenyangecho\UEditor\UEditorServiceProvider::class,
+        //阿里云支付
+        Ignited\LaravelOmnipay\LaravelOmnipayServiceProvider::class,
+
+        //Dingo API
+        Dingo\Api\Provider\LaravelServiceProvider::class,
+
+        //ping ++
+        lyt8384\Pingpp\PingppServiceProvider::class,
+
     ],
 
     /*
@@ -226,8 +237,13 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'Uuid' => Webpatser\Uuid\Uuid::class,
-
+        'UUID' => Webpatser\Uuid\Uuid::class,
+        'Omnipay' => Ignited\LaravelOmnipay\Facades\OmnipayFacade::class,
+        'Pingpp' => lyt8384\Pingpp\Facades\Pingpp::class,
     ],
 
 ];
+
+$app->register(Ignited\LaravelOmnipay\LumenOmnipayServiceProvider::class);
+$app->configure('laravel-omnipay');
+$app->register(Dingo\Api\Provider\LumenServiceProvider::class);

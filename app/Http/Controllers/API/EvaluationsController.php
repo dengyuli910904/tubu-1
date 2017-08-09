@@ -13,7 +13,7 @@ class EvaluationsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $list = Evaluations::where('activites_id','=',$request->input('activites_id'))->get();
         foreach ($list as $key => $value) {

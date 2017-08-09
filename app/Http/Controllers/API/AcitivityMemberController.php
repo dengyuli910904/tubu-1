@@ -15,7 +15,11 @@ class AcitivityMemberController extends Controller
      */
     public function index(Request $request)
     {
-        $list = ActivityMember::where('activities_id','=',$request->input('activities_id'))->select('users_id','role')->get();
+        $list = ActivityMember::where('activities_id','=',$request->input('activities_id'))
+        ->where(function($query) use ($request){
+            // ，searchtxt
+        })
+        ->select('users_id','role')->get();
         foreach ($list as $key => $value) {
             switch ($value->role) {
                 case 0:
@@ -52,7 +56,7 @@ class AcitivityMemberController extends Controller
      */
     public function store(Request $request)
     {
-        $member = ActivityMember::find($request->input('id'));
+        $member = new ActivityMember();
         $member->activities_id = $request->input('activities_id');
         $member->role = 0;
         $member->users_id = $request->intpu('users_id');
@@ -95,7 +99,7 @@ class AcitivityMemberController extends Controller
      */
     public function update(Request $request)
     {
-        $member = ActivityMember::find($request->input('id'));
+        $member = ActivityMember::where('users_id',$request->input('users_id'))->where('activities_id',$request->input('activities_id'))->first();
         $member->is_pay = 1;//
         $member->pay_path = 2;//$request->input('pay_path');//1正常支付，2管理员操作，3其他
         if($member->save()){
@@ -114,7 +118,7 @@ class AcitivityMemberController extends Controller
      */
     public function setrole(Request $request)
     {
-        $member = ActivityMember::find($request->input('id'));
+        $member = ActivityMember::where('users_id',$request->input('users_id'))->where('activities_id',$request->input('activities_id'))->first();
         $member->role = 1; //副领队 ，0： 普通成员
         if($member->save()){
             return Common::returnResult('200','修改成功',"");

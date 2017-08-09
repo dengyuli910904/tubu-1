@@ -17,6 +17,9 @@ class ActivitiesController extends Controller
      */
     public function index(Request $request){
     	$list = Activities::where('is_able','=','1')
+            ->where(function($query) use($request){
+                //searchtxt
+            })
     		->select('id','cover','title''starttime','endtime',
     				 'enrol_starttime','enrol_endtime','cost','limit_count','participation_count',
     				 'apply_count','status','keywords')

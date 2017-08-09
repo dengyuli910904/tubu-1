@@ -14,22 +14,39 @@ class GroupsApplyController extends Controller
     /**
      * 申请加入圈子
      */
-    public function create(Request $request){
+    public function store(Request $request){
     	$apply = new GroupsApply();
     	$apply->id = UUID::generate();
     	$apply->groups->id = $request->input('groups_id');
-    	$apply->user_id = $request->input('user_id');
+    	$apply->user_id = $request->input('users_id');
+        $apply->type = 0;
     	if($apply->save()){
 			return Common::returnResult(200,'申请成功',"");
 		}else{
 			return Common::returnResult(400,'申请失败',"");
 		}
     }
-
+    /**
+     * 用户被邀请进入圈子
+     */
+    public function invite(Request $request){
+        //users_id 当前登录用户id ，invite_users_id //被邀请用户id
+        $apply = new GroupsApply();
+        $apply->id = UUID::generate();
+        $apply->groups->id = $request->input('groups_id');
+        $apply->user_id = $request->input('invite_users_id');
+        $apply->type = 1;
+        if($apply->save()){
+            return Common::returnResult(200,'邀请成功',"");
+        }else{
+            return Common::returnResult(400,'邀请失败',"");
+        }
+    }
     /**
      * 审核用户加入圈子
      */
-    public function edit(Request $request){
+    public function update(Request $request){
+        
     	if($request->has('id')){
     		$apply = GroupsApply::find($request->input('id'));
     		if(!empty($apply)){

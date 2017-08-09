@@ -6,10 +6,15 @@
     "type": "project",
     "require": {
         "php": ">=5.6.4",
+        "aliyuncs/oss-sdk-php": "~2.0",
+        "dingo/api": "1.0.x@dev",
+        "ignited/laravel-omnipay": "2.*",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
-        "dingo/api": "1.0.*@dev",
-        "webpatser/laravel-uuid": "2.*"
+        "lokielse/omnipay-alipay": "dev-master",
+        "stevenyangecho/laravel-u-editor": "~1.3",
+        "webpatser/laravel-uuid": "2.*",
+        "lyt8384/pingpp-laravel5-plus": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

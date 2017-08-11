@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Models\ActivityMember;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\GroupMember;
+use App\Models\Activities;
 
 class AcitivityMemberController extends Controller
 {
@@ -118,13 +120,38 @@ class AcitivityMemberController extends Controller
      */
     public function setrole(Request $request)
     {
-        $member = ActivityMember::where('users_id',$request->input('users_id'))->where('activities_id',$request->input('activities_id'))->first();
-        $member->role = 1; //副领队 ，0： 普通成员
-        if($member->save()){
-            return Common::returnResult('200','修改成功',"");
+        $member = ActivityMember::where('users_id',$request->input('u_id'))->where('activities_id',$request->input('activities_id'))->first();
+        if(!$member){
+            $member->role = 1; //副领队 ，0： 普通成员
+            $member->is_pay = 1;
+            if($member->save()){
+                return Common::returnResult('200','修改成功',"");
+            }else{
+                return Common::returnResult('400','修改失败',"");
+            }
         }else{
-            return Common::returnResult('400','修改失败',"");
+            $activity = Activities::find($request->input('activities_id'));
+            if(!$activity){
+                return Common::returnResult('400','活动记录不存在',"");
+            }
+            $groups = GroupMember::where('groups_id',$activity->groups_id)->where('users_id',$request->input('u_id'))->first();
+            if(!$groups){
+                return Common::returnResult('200','该用户还不属于我们圈子，请先邀请加入圈子在进行角色设置',"");
+            }
+            $member = new ActivityMember();
+            $member->activities_id = $request->input('activities_id');
+            $member->role = 1;
+            $member->is_pay = 1;
+            $member->comment = '由领队设置成为副领队';
+            $member->users_id = $request->intpu('users_id');
+            $member->comment = $request->input('comment');
+            if($member->save()){
+                return Common::returnResult('200','设置成功',"");
+            }else{
+                return Common::returnResult('400','设置成功',"");
+            }
         }
+        
     }
 
     /**

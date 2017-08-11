@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Models\Evaluations;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Libraries\Common;
+use UUID;
 
 class EvaluationsController extends Controller
 {
@@ -15,7 +17,7 @@ class EvaluationsController extends Controller
      */
     public function index(Request $request)
     {
-        $list = Evaluations::where('activites_id','=',$request->input('activites_id'))->get();
+        $list = Evaluations::where('activities_id','=',$request->input('activities_id'))->get();
         foreach ($list as $key => $value) {
             $user = Users::find($value->users_id);
             $list['userinfo'] = $user;
@@ -45,7 +47,7 @@ class EvaluationsController extends Controller
         $evalustion->id = UUID::generate();
         $evalustion->users_id = $request->input('users_id');
         $evalustion->content = $request->input('content');
-        $evalustion->activites_id = $request->input('activites_id');
+        $evalustion->activities_id = $request->input('activities_id');
         $evalustion->starlevel = $request->input('starlevel');
         if($evalustion->save()){
             return Common::returnResult('200','评论成功',"");

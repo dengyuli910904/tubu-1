@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\GroupMember;
+use App\Libraries\Common;
 
 class GroupsMemberController extends Controller
 {
@@ -21,7 +22,7 @@ class GroupsMemberController extends Controller
             	return Common::returnResult(400,'设置失败',"");
             }
         }else{
-            return Common::returnResult(400,'该记录不存在',"");
+            return Common::returnResult(400,'该用户不属于本圈子',"");
         }
     }
     /**
@@ -37,7 +38,7 @@ class GroupsMemberController extends Controller
                 return Common::returnResult(400,'设置失败',"");
             }
         }else{
-            return Common::returnResult(400,'该记录不存在',"");
+            return Common::returnResult(400,'该用户不属于本圈子',"");
         }
     }
 

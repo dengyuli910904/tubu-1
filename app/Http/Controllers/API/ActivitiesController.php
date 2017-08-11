@@ -9,6 +9,7 @@ use App\Models\Groups;
 use App\Models\Users;
 use App\Models\ActivityMember;
 use App\Libraries\Common;
+use UUID;
 
 class ActivitiesController extends Controller
 {
@@ -20,9 +21,7 @@ class ActivitiesController extends Controller
             ->where(function($query) use($request){
                 //searchtxt
             })
-    		->select('id','cover','title''starttime','endtime',
-    				 'enrol_starttime','enrol_endtime','cost','limit_count','participation_count',
-    				 'apply_count','status','keywords')
+    		->select('id','cover','title','starttime','endtime','enrol_starttime','enrol_endtime','cost','limit_count','participation_count','apply_count','status','keywords')
     		->get();
     	return Common::returnResult('200','查询成功',$list);
     }
@@ -42,11 +41,11 @@ class ActivitiesController extends Controller
             foreach ($idlist as $key => $value) {
                 switch ($value->role) {
                     case 0:
-                        $memberid = $memberid.$value->id.($key === (count($idlist)-1):''?',');
+                        $memberid = $memberid.$value->id.($key === (count($idlist)-1)?'':',');
                         break;
                     
                     case 1:
-                        $deputyid = $deputyid.$value->id.($key === (count($idlist)-1):''?',');
+                        $deputyid = $deputyid.$value->id.($key === (count($idlist)-1)?'':',');
                         break;
                 }
             }
@@ -80,8 +79,9 @@ class ActivitiesController extends Controller
         $activity->groups_id = $request->input('groups_id');
         $activity->keywords = $request->input('keywords');
         $activity->cover = $request->input('cover');
+        $activity->users_id = $request->input('users_id');
         if($activity->save()){
-            return Common::returnResult('200','保存成功',array('id'=>$activity->id));
+            return Common::returnResult('200','保存成功',$activity);
         }else{
             return Common::returnResult('400','保存失败',"");
         }

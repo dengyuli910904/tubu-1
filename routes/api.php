@@ -44,11 +44,13 @@ $api->version('v1',function($api){
 		//用户被邀请进入圈子 @param users_id 当前登录用户id ，invite_users_id //被邀请用户id
 		$api->post('/invite','GroupsApplyController@invite');
 		//审核用户加入圈子 @param id(申请记录id)，status(1 通过，2不通过)
-		$api->put('/doapply','GroupsApplyController@update');
+
+		$api->post('/doapply','GroupsController@update');
 
 		//设置成为领队 @param groups_id(圈子id)，users_id(成员id)
 		$api->put('/setrole','GroupsMemberController@setrole');
-		//设置成为副圈主 @param groups_id(圈子id)，users_id(成员id)
+		//设置成为领队 @param groups_id(圈子id)，users_id(成员id)
+
 		$api->put('/setleader','GroupsMemberController@setleader');
 		//设置圈子领队成为普通圈子成员@param groups_id(圈子id)，users_id(成员id)
 		$api->put('/cancelrole','GroupsMemberController@cancelrole');
@@ -76,7 +78,9 @@ $api->version('v1',function($api){
 		//
 	});
 	//活动留言
+
 	$api->group(['namespace'=>'App\Http\Controllers\API','prefix'=>'messages'],function($api){
+
 		//活动留言列表 @param activites_id(活动id)，users_id(当前用户id)
 		$api->get('/lists','MessagesController@index');
 		//设置留言显示状态 @param id(留言id)，status(留言状态，0 显示 ，1不显示)
@@ -86,7 +90,9 @@ $api->version('v1',function($api){
 		
 	});
 	//活动评价
+
 	$api->group(['namespace'=>'App\Http\Controllers\API','prefix'=>'evaluations'],function($api){
+
 		//获取活动评价列表 @param activites_id(活动id)，users_id 当前登陆用户id
 		$api->get('/lists','EvaluationsController@index');
 		//活动评价 @param users_id(当前登陆id)，content(评价内容)，activities_id(活动id)，starlevel(评价星级)

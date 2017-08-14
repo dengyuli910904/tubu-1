@@ -41,6 +41,22 @@ class GroupsMemberController extends Controller
             return Common::returnResult(400,'该用户不属于本圈子',"");
         }
     }
+    /**
+     * 设置成为副圈主
+     */
+    public function setleader(Request $request){
+        $members = GroupMember::where('groups_id',$request->input('groups_id'))->where('users_id',$request->input('users_id'))->first();
+        if(!empty($members)){
+            $members->role = 2;//设置成员成为副圈主
+            if($members->save()){
+                return Common::returnResult(200,'设置成功',"");
+            }else{
+                return Common::returnResult(400,'设置失败',"");
+            }
+        }else{
+            return Common::returnResult(400,'该记录不存在',"");
+        }
+    }
 
     /**
      * 设置圈子领队成为普通圈子成员

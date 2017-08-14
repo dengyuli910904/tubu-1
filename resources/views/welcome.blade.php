@@ -79,7 +79,10 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                   <form action="{{ url('/fileupload') }}" method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <input type="file" name="upfile" id="upfile">
+                        <button type="submit">submit</button>
+                   </form>
                 </div>
 
                 <div class="links">

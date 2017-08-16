@@ -20,6 +20,9 @@ class GroupsController extends Controller
     public function groups(Request $request){
         //需要用户所在的圈子，并且用户为该圈子的领队
         $list = Groups::where('status','=','1')->select('id','name')->get();
+        if(!count($list)){
+            return Common::returnResult(200,'获取成功',"");
+        }
         return Common::returnResult(200,'获取成功',$list);
         // return $this->response->array($list->toArray());
     }
@@ -30,8 +33,8 @@ class GroupsController extends Controller
     	// $str = $request->input('searchtxt');
     	$list = Groups::where(function($query) use ($request){
     		if($request->has('searchtxt')){
-    			$query->where('name','like','%'.$str.'%');
-    		}
+    			$query->where('name','like','%'.$request->input('searchtxt').'%');
+        }
     		// if($request->has('user_id')){
     		// 	//用户登陆情况下，需要查询排除用户的参与的圈子？
     		// 	$query->where('')
@@ -90,8 +93,8 @@ class GroupsController extends Controller
      */
     public function edit(Request $request){
     	if($request->has('id')){
-    		$gourps = Groups::find($request->input('id'));
-    		if(!empty($groups)){
+    		$groups = Groups::find($request->input('id'));
+    		if($groups){
     			$groups->name = $request->input('name');
     			$groups->intro = $request->input('intro');
     			$groups->address = $request->input('address');
@@ -136,8 +139,8 @@ class GroupsController extends Controller
             foreach ($idlist as $key => $value) {
                 switch ($value->role) {
                     case 0:
-                        $memberid = $memberid.$value->id.($key === (count($idlist)-1)?'':',');
-                        break;
+                        $memberid = $memberid.$value->id.($key === (count($idlist)-1)?'':',');                       
+                    break;
                     
                     case 1:
                         $deputyid = $deputyid.$value->id.($key === (count($idlist)-1)?'':',');
@@ -153,7 +156,6 @@ class GroupsController extends Controller
     }
 
     
-
     /**
      * 编辑圈子信息
      */
@@ -179,46 +181,62 @@ class GroupsController extends Controller
     	}
     }
 
+
     /**
-     * 创建圈子
+     * 创建圈子，发送到后台进行审核
      */
-    public function create(Request $request){
-    	$groups = new Groups();
-    	$groups->id = UUID::generate();
-		$groups->name = $request->input('name');
-		$groups->intro = $request->input('intro');
-		$groups->address = $request->input('address');
-		$groups->cover = $request->input('cover');
-		if($groups->save()){
-			return Common::returnResult(200,'创建成功',"");
-		}else{
-			return Common::returnResult(400,'创建失败',"");
-		}
+    public function store(Request $request){
+        $groups = Groups::where('name',$request->input('name'))
+            // ->where('address',$request->input('address'))
+            ->first();
+        if(!$groups){
+            $groups = new Groups();
+            $groups->id = UUID::generate();
+            $groups->name = $request->input('name');
+            $groups->intro = $request->input('intro');
+            $groups->address = $request->input('address');
+            $groups->cover = $request->input('cover');
+            if($groups->save()){
+                return Common::returnSuccessResult(200,'创建成功',$groups);
+            }else{
+                return Common::returnErrorResult(400,'创建失败',"");
+            }
+        }else{
+            return Common::returnErrorResult(400,'该圈子已存在',"");
+        }
+    	
     }
 
     /**
      * 获取圈子用户列表
      */
     public function members(Request $request){
-        $gourps = Groups::find($request->input('id'));
-        if(!empty($groups)){
+        $groups = Groups::find($request->input('id'));
+        if($groups){
+            $data = [];
             $idlist = GroupMember::where('groups_id','=',$request->input('id'))->select('users_id','role')->get();
             foreach ($idlist as $key => $value) {
                 switch ($value->role) {
                     case 0:
-                        $memberid = $memberid.$value->id.($key === (count($idlist)-1):''?',');
+                        $memberid = $memberid.$value->id.($key === (count($idlist)-1)?'':',');
                         break;
-                    
+                   
                     case 1:
-                        $deputyid = $deputyid.$value->id.($key === (count($idlist)-1):''?',');
+                        $deputyid = $deputyid.$value->id.($key === (count($idlist)-1)?'':',');
                         break;
                 }
             }
-            // $userid = $userid.$groups->users_id;
-
-            $deputys = Users::where('id','in','('.$deputyid.')')->get();
+            if(!empty($deputyid)){
+                $deputys = Users::where('id','in','('.$deputyid.')')->get();
+                $data['deputys'] = $deputys;//副圈主列表
+            }
+            if(!empty($memberid)){
+                $members = Users::where('id','in','('.$memberid.')')->get();
+                $data['members'] = $members;//普通成员列表
+            }
+            return Common::returnResult(200,'获取成功',$data);
         }else{
-            return Common::returnResult(400,'该记录不存在',"");
+            return Common::returnResult(400,'该记录不存在','');
         }
     }
 

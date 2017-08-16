@@ -1,4 +1,4 @@
-<?php
+<?ph
 
 namespace App\Http\Controllers\API;
 
@@ -15,31 +15,42 @@ class GroupsApplyController extends Controller
      * 申请加入圈子
      */
     public function store(Request $request){
-    	$apply = new GroupsApply();
-    	$apply->id = UUID::generate();
-    	$apply->groups->id = $request->input('groups_id');
-    	$apply->user_id = $request->input('users_id');
-        $apply->type = 0;
-    	if($apply->save()){
-			return Common::returnResult(200,'申请成功',"");
-		}else{
-			return Common::returnResult(400,'申请失败',"");
-		}
+        $apply = GroupsApply::where('groups_id',$request->input('groups_id'))->where('users_id',$request->input('u_id'))->first();
+        if(!$apply){
+            $apply = new GroupsApply();
+            $apply->id = UUID::generate();
+            $apply->groups_id = $request->input('groups_id');
+            $apply->users_id = $request->input('users_id');
+            $apply->type = 0;
+            if($apply->save()){
+                return Common::returnResult(200,'申请成功',"");
+            }else{
+                return Common::returnResult(400,'申请失败',"");
+            }
+        }else{
+            return Common::returnResult(400,'该用户已有申请记录',"");
+        }
+    	
     }
     /**
      * 用户被邀请进入圈子
      */
     public function invite(Request $request){
         //users_id 当前登录用户id ，invite_users_id //被邀请用户id
-        $apply = new GroupsApply();
-        $apply->id = UUID::generate();
-        $apply->groups->id = $request->input('groups_id');
-        $apply->user_id = $request->input('invite_users_id');
-        $apply->type = 1;
-        if($apply->save()){
-            return Common::returnResult(200,'邀请成功',"");
+        $apply = GroupsApply::where('groups_id',$request->input('groups_id'))->where('users_id',$request->input('invite_users_id'))->first();
+        if(!$apply){
+            $apply = new GroupsApply();
+            $apply->id = UUID::generate();
+            $apply->groups_id = $request->input('groups_id');
+            $apply->users_id = $request->input('invite_users_id');
+            $apply->type = 1;
+            if($apply->save()){
+                return Common::returnResult(200,'邀请成功',"");
+            }else{
+                return Common::returnResult(400,'邀请失败',"");
+            }
         }else{
-            return Common::returnResult(400,'邀请失败',"");
+            return Common::returnResult(400,'该用户已有申请记录',"");
         }
     }
     /**
@@ -49,11 +60,12 @@ class GroupsApplyController extends Controller
         
     	if($request->has('id')){
     		$apply = GroupsApply::find($request->input('id'));
-    		if(!empty($apply)){
-    			if($request->input('status') === 1){
+    		if(!empty($apply))
+    			if($request->input('status') == 1){
     				//通过
     				$apply->status = 1;//
     				$member = new GroupMember();
+                    $member->id = UUID::generate();
     				$member->groups_id = $apply->groups_id;
     				$member->users_id = $apply->users_id;
     				$member->save();

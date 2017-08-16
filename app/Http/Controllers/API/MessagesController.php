@@ -7,6 +7,8 @@ use App\Models\Users;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use UUID;
+use App\Libraries\Common;
+
 class MessagesController extends Controller
 {
     /**
@@ -96,11 +98,15 @@ class MessagesController extends Controller
     public function update(Request $request)
     {
         $message = Messages::find($request->input('id'));
-        $message->status = $request->input('status');
-        if($message->save()){
-            return Common::returnResult('200','修改成功',"");
+        if($message){
+            $message->status = $request->input('status');
+            if($message->save()){
+                return Common::returnResult('200','修改成功',"");
+            }else{
+                return Common::returnResult('400','修改失败',"");
+            }
         }else{
-            return Common::returnResult('400','修改失败',"");
+            return Common::returnResult('400','记录不存在',"");
         }
     }
 

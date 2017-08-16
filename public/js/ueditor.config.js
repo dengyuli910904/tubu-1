@@ -489,6 +489,7 @@
         return protocol + res.join("/");
 
     }
+
     function getRootPath(){  
         //获取当前网址，如： http://localhost:8083/uimcardprj/share/meun.jsp  
         var curWwwPath=window.document.location.href;  
@@ -517,8 +518,8 @@
             return localhostPaht+"/";
         } 
           
-    }
-
+    } 
+    
     window.UE = {
         getUEBasePath: getUEBasePath
     };

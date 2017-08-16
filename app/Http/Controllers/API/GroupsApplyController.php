@@ -1,4 +1,4 @@
-<?php
+<?ph
 
 namespace App\Http\Controllers\API;
 
@@ -60,7 +60,7 @@ class GroupsApplyController extends Controller
         
     	if($request->has('id')){
     		$apply = GroupsApply::find($request->input('id'));
-    		if(!empty($apply)){
+    		if(!empty($apply))
     			if($request->input('status') == 1){
     				//通过
     				$apply->status = 1;//

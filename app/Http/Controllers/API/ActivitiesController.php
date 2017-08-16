@@ -21,7 +21,9 @@ class ActivitiesController extends Controller
             ->where(function($query) use($request){
                 //searchtxt
             })
-    		->select('id','cover','title','starttime','endtime','enrol_starttime','enrol_endtime','cost','limit_count','participation_count','apply_count','status','keywords')
+    		->select('id','cover','title''starttime','endtime',
+    				 'enrol_starttime','enrol_endtime','cost','limit_count','participation_count',
+    				 'apply_count','status','keywords')
     		->get();
     	return Common::returnResult('200','查询成功',$list);
     }

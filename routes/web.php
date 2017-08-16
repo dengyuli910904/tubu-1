@@ -28,9 +28,13 @@ Route::prefix('api')
     ->group(base_path('routes/api.php'));
 
 
+Route::get('/',function(){
+	return view('web.activity.act_publish');
+});
+
 //图片上传
 Route::group(['namespace' => 'Common'],function(){
-    // Route::any('/upload','UeditorController@server');
+    Route::any('/upload','UeditorController@server');
     Route::post('/fileupload','UeditorController@uploadimg');
 });
 //支付功能（微信支付、支付宝支付）

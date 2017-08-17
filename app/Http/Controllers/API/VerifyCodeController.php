@@ -7,5 +7,7 @@ use App\Http\Controllers\Controller;
 
 class VerifyCodeController extends Controller
 {
-    //
+    /**
+     * 发送验证码
+     */
 }

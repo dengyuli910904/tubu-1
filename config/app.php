@@ -189,6 +189,10 @@ return [
         //ping ++
         lyt8384\Pingpp\PingppServiceProvider::class,
 
+        //阿里云短信
+        Toplan\PhpSms\PhpSmsServiceProvider::class,
+        Toplan\Sms\SmsManagerServiceProvider::class,
+
     ],
 
     /*
@@ -240,8 +244,9 @@ return [
         'UUID' => Webpatser\Uuid\Uuid::class,
         'Omnipay' => Ignited\LaravelOmnipay\Facades\OmnipayFacade::class,
         'Pingpp' => lyt8384\Pingpp\Facades\Pingpp::class,
+        'PhpSms' => Toplan\PhpSms\Facades\Sms::class,
+        'SmsManager' => Toplan\Sms\Facades\SmsManager::class,
     ],
-
 ];
 
 $app->register(Ignited\LaravelOmnipay\LumenOmnipayServiceProvider::class);

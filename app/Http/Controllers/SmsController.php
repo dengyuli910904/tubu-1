@@ -3,9 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+// use SendSms;
+use App;
 
 class SmsController extends Controller
 {
+
+    public function sendmsg(Request $request){
+        $smsService = App::make(AliyunSms::class);
+        $smsService->send(strval($mobile), 'SMS_xxx', ['code' => strval(1234), 'product' => 'xxx']);
+    }
     public function sendSms(Request $request) {
         $this->dispatch(new SendSms("13800000000", null, null, null));
         return "ok";

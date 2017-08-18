@@ -54,6 +54,10 @@ $api->version('v1',function($api){
 		$api->put('/setleader','GroupsMemberController@setleader');
 		//设置圈子领队成为普通圈子成员@param groups_id(圈子id)，users_id(成员id)
 		$api->put('/cancelrole','GroupsMemberController@cancelrole');
+		//关注圈子
+		$api->post('/follow','GroupsFollowController@store');
+		//取消圈子
+		$api->delete('/follow','GroupsFollowController@destory');
 	});
 
 	//活动接口
@@ -75,7 +79,14 @@ $api->version('v1',function($api){
 		//修改活动状态 @param id(活动id)，step(活动状态 1 正式发布，2结束报名状态，3 取消活动，4 活动结束)，users_id 当前登录用户id 
 		$api->put('/setstatus','ActivitiesController@update');
 		//搜索用户（在prefix为users中）
-		//
+		//关注活动
+		$api->post('/follow','ActivitiesFollowController@store');
+		//取消关注
+		$api->delete('/follow','ActivitiesFollowController@destory');
+		//收藏活动
+		$api->post('/collect','ActivitiesCollectController@store');
+		//取消关注
+		$api->delete('/collect','ActivitiesCollectController@destory');
 	});
 	//活动留言
 
@@ -111,5 +122,31 @@ $api->version('v1',function($api){
 		$api->post('/takein','AcitivityMemberController@store');
 		//设置成员副领队身份 @param users_id(成员id)，activities_id(活动id)
 		$api->put('/setrole','AcitivityMemberController@store');
+	});
+
+
+	//我的
+	$api->group(['namespace'=> 'App\Http\Controllers\API','prefix' => 'user'],function($api){
+		//登录
+		$api->post('/login','UsersController@login');
+		//我的消息
+		$api->get('/messages','UsersController@myMesage');
+		//我的评价
+		$api->get('/comments','UsersController@myComment');
+		//我的回复
+		$api->get('/replies','UsersController@myReply');
+		//我的活动
+		$api->get('/activities','UsersController@myActivity');
+		//我的圈子
+		$api->get('/groups','UsersController@myCircle');
+		//我创建的活动
+		$api->get('/createdact','UsersController@myCreatedCirclesActivity');
+
+		//我关注的活动
+		$api->get('/followacts','UsersController@watchActivity');
+		//我关注的圈子
+		$api->get('/followgroups','UsersController@watchCircle');
+		//我收藏的活动
+		$api->get('/collectacts','UsersController@favoriteActivity');
 	});
 });

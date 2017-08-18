@@ -30,16 +30,16 @@ class GroupsController extends Controller
      * 获取所有的圈子,圈子列表（首页）
      */
     public function index(Request $request){
-    	// $str = $request->input('searchtxt');
     	$list = Groups::where(function($query) use ($request){
     		if($request->has('searchtxt')){
     			$query->where('name','like','%'.$request->input('searchtxt').'%');
-        }
+            }
     		// if($request->has('user_id')){
     		// 	//用户登陆情况下，需要查询排除用户的参与的圈子？
     		// 	$query->where('')
     		// }
     	})
+        ->where('status','=','1')
     	->orderby('created_at','desc')
     	->get();
     	return Common::returnResult(200,'获取成功',$list);

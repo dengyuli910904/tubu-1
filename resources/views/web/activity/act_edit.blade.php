@@ -24,19 +24,20 @@
             </div>
             @endif
         </div>
-        <form action="{{ route('activity.store')}}" method="post" enctype="multipart/form-data" class="form-horizontal ">
+        <form action="{{ route('activity.update',['id'=>$model->id])}}" method="post" enctype="multipart/form-data" class="form-horizontal ">
+            <input type="hidden" name="_method" value="PUT">
             <div class="panel-body">
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="text-input">选择圈子</label>
                     <div class="col-md-9">
                         <select class="form-control" name="groups_id">
                         @foreach($groups as $g)
-                          <option value="{{$g->id}}">{{$g->name}}</option>
+                            @if($g->id == $model->groups_id)
+                                <option value="{{$g->id}}" selected="true">{{$g->name}}</option>
+                            @else
+                                <option value="{{$g->id}}">{{$g->name}}</option>
+                            @endif
                         @endforeach
-                          <!-- <option>2</option>
-                          <option>3</option>
-                          <option>4</option>
-                          <option>5</option> -->
                         </select>
                     </div>
                 </div>
@@ -53,7 +54,7 @@
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="text-input">活动标题</label>
                     <div class="col-md-9">
-                        <input type="text" id="title" name="title" class="form-control" placeholder="活动标题">
+                        <input type="text" id="title" name="title" class="form-control" placeholder="活动标题" value="{{ $model->title}}">
                         <!-- <span class="help-block">This is a help text</span> -->
                     </div>
                 </div>
@@ -70,7 +71,7 @@
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="text-input">活动费用</label>
                     <div class="col-md-9">
-                        <input type="number" id="cost" name="cost" class="form-control" placeholder="活动费用">
+                        <input type="number" id="cost" name="cost" class="form-control" placeholder="活动费用" value="{{ $model->cost }}">
                         <!-- <span class="help-block">This is a help text</span> -->
                     </div>
                 </div>
@@ -79,7 +80,7 @@
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="text-input">活动费用说明</label>
                     <div class="col-md-9">
-                        <textarea class="form-control" style="resize:none" name="cost_intro" rows="5"></textarea>
+                        <textarea class="form-control" style="resize:none" name="cost_intro" rows="5">{{$model->cost_intro}}</textarea>
                         <!-- <input type="text" id="bannertitle" name="bannertitle" class="form-control" placeholder="活动费用说明"> -->
                         <!-- <span class="help-block">This is a help text</span> -->
                     </div>
@@ -89,7 +90,7 @@
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="text-input">活动时间</label>
                     <div class="col-md-9">
-                        <input type="text" id="starttime" name="starttime" class="form-control" placeholder="活动时间">
+                        <input type="text" id="starttime" name="starttime" class="form-control" placeholder="活动时间" value="{{ $model->starttime }}">
                         <!-- <span class="help-block">This is a help text</span> -->
                     </div>
                 </div>
@@ -98,7 +99,7 @@
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="text-input">活动报名时间</label>
                     <div class="col-md-9">
-                        <input type="text" id="enrol_starttime" name="enrol_starttime" class="form-control" placeholder="活动报名时间">
+                        <input type="text" id="enrol_starttime" name="enrol_starttime" class="form-control" placeholder="活动报名时间" value="{{ $model->enrol_starttime }}">
                         <!-- <span class="help-block">This is a help text</span> -->
                     </div>
                 </div>
@@ -107,7 +108,7 @@
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="text-input">活动联系人</label>
                     <div class="col-md-9">
-                        <input type="text" id="contacts" name="contacts" class="form-control" placeholder="活动联系人">
+                        <input type="text" id="contacts" name="contacts" class="form-control" placeholder="活动联系人" value="{{ $model->contacts }}">
                         <!-- <span class="help-block">This is a help text</span> -->
                     </div>
                 </div>
@@ -116,7 +117,7 @@
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="text-input">活动联系人电话</label>
                     <div class="col-md-9">
-                        <input type="text" id="contacts_tel" name="contacts_tel" class="form-control" placeholder="活动联系人电话">
+                        <input type="text" id="contacts_tel" name="contacts_tel" class="form-control" placeholder="活动联系人电话" value="{{ $model->contacts_tel }}">
                         <!-- <span class="help-block">This is a help text</span> -->
                     </div>
                 </div>
@@ -125,7 +126,7 @@
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="text-input">活动人数上限</label>
                     <div class="col-md-9">
-                        <input type="text" id="limit_count" name="limit_count" class="form-control" placeholder="活动人数上限">
+                        <input type="text" id="limit_count" name="limit_count" class="form-control" placeholder="活动人数上限" value="{{ $model->limit_count }}">
                         <!-- <span class="help-block">This is a help text</span> -->
                     </div>
                 </div>
@@ -134,7 +135,7 @@
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="text-input">关键词</label>
                     <div class="col-md-9">
-                        <input type="text" id="keywords" name="keywords" class="form-control" placeholder="关键词">
+                        <input type="text" id="keywords" name="keywords" class="form-control" placeholder="关键词" value="{{ $model->keywords }}">
                         <!-- <span class="help-block">This is a help text</span> -->
                     </div>
                 </div>
@@ -143,7 +144,7 @@
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="text-input">活动备注</label>
                     <div class="col-md-9">
-                        <input type="text" id="comment" name="comment" class="form-control" placeholder="活动备注">
+                        <input type="text" id="comment" name="comment" class="form-control" placeholder="活动备注" value="{{ $model->comment }}">
                         <!-- <span class="help-block">This is a help text</span> -->
                     </div>
                 </div>
@@ -154,7 +155,8 @@
                 <button type="reset" class="btn btn-sm btn-danger"><i class="fa fa-ban"></i> 重置</button>
             </div> 
 
-            <input type="hidden" name="cover" id="cover">
+            <input type="hidden" name="cover" id="cover" value="{{ $model->cover }}">
+            <input type="hidden" id="content" value="{{$model->content}}">
         </form>
     </div>
 @endsection
@@ -167,6 +169,7 @@
         ue.ready(function(){
             //因为Laravel有防csrf防伪造攻击的处理所以加上此行
             ue.execCommand('serverparam','_token','{{ csrf_token() }}');
+            ue.setContent($('#content').val()); 
         });
         
 

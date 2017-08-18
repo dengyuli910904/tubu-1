@@ -21,7 +21,7 @@ class ActivitiesController extends Controller
             ->where(function($query) use($request){
                 //searchtxt
             })
-    		->select('id','cover','title''starttime','endtime',
+            ->select('id','cover','title','starttime','endtime',
     				 'enrol_starttime','enrol_endtime','cost','limit_count','participation_count',
     				 'apply_count','status','keywords')
     		->get();
@@ -82,6 +82,8 @@ class ActivitiesController extends Controller
         $activity->keywords = $request->input('keywords');
         $activity->cover = $request->input('cover');
         $activity->users_id = $request->input('users_id');
+        $activity->content = "";
+        $activity->cost_intro = "";
         if($activity->save()){
             return Common::returnResult('200','保存成功',$activity);
         }else{

@@ -28,13 +28,28 @@ Route::prefix('api')
     ->group(base_path('routes/api.php'));
 
 
+Route::prefix('admin')
+	->namespace('Admin')
+	->group(base_path('routes/admin.php'));
+
+
+Route::group(['prefix'=>'web','namespace'=>'Admin'],function(){
+	// Route::group(['prefix'=>'activity'],function(){
+		Route::resource('activity','ActivitiesController');
+	// });
+});
+
 Route::get('/',function(){
 	return view('web.activity.act_publish');
 });
+
 
 //图片上传
 Route::group(['namespace' => 'Common'],function(){
     Route::any('/upload','UeditorController@server');
     Route::post('/fileupload','UeditorController@uploadimg');
 });
+
+//发送短信
+Route::post('/sendsms','SmsController@sendmsg');
 //支付功能（微信支付、支付宝支付）

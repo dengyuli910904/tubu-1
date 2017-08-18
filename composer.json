@@ -7,14 +7,16 @@
     "require": {
         "php": ">=5.6.4",
         "aliyuncs/oss-sdk-php": "~2.0",
+        "cmzz/laravel-aliyun-sms": "^1.0",
         "dingo/api": "1.0.x@dev",
         "ignited/laravel-omnipay": "2.*",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "lokielse/omnipay-alipay": "dev-master",
+        "lyt8384/pingpp-laravel5-plus": "dev-master",
         "stevenyangecho/laravel-u-editor": "~1.3",
-        "webpatser/laravel-uuid": "2.*",
-        "lyt8384/pingpp-laravel5-plus": "dev-master"
+        "toplan/laravel-sms": "~2.6",
+        "webpatser/laravel-uuid": "2.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

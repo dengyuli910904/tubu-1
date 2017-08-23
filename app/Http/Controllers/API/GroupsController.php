@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
@@ -10,6 +9,7 @@ use App\Models\GroupMember;
 use App\Libraries\Common;
 use UUID;
 use Dingo\Api\Routing\Helpers;
+use App\Models\GroupsApply;
 
 class GroupsController extends Controller
 {
@@ -42,6 +42,36 @@ class GroupsController extends Controller
         ->where('status','=','1')
     	->orderby('created_at','desc')
     	->get();
+
+        //若用户id不为空，则返回一个字段
+        $mygroups = [];
+        $myapply = [];
+        if($request->has('users_id')){
+            $mygroups = Groups::join('groupmember as g','groups.id','=','g.groups_id')->where('g.users_id',$request->input('users_id'))->select('groups.id')->get();
+            $myapply = Groups::join('groups_apply as ag','groups.id','=','ag.groups_id')->where('ag.users_id',$request->input('users_id'))->where('ag.status','0')->select('groups.id')->get();
+        }
+
+        
+
+        // if($mygroups){
+        foreach ($list as $val) {
+            $val->is_member = 0;//先默认非成员
+            foreach ($mygroups as $g) {
+                if($val->id == $g->id)
+                    $val->is_member = 1;//当条件匹配上则改成是成员
+            }
+            foreach ($myapply as $ag) {
+                if($val->id == $ag->id)
+                    $val->is_member = 2;//当条件匹配上则改成是已经申请，但正在待审核
+            }
+        }
+        // }else{
+        //     foreach ($list as $val) {
+        //         $val->is_member = 0;//非改圈子成员
+        //     }
+        // }
+        
+
     	return Common::returnResult(200,'获取成功',$list);
     }
 

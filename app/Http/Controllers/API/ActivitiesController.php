@@ -35,27 +35,45 @@ class ActivitiesController extends Controller
     	$activity = Activities::find($request->input('id'));
     	if(!empty($activity)){
             $groups = Groups::find($activity->groups_id);
-            $data['activityinfo'] = $activity;
-            $data['groupsinfo'] = array('name'=>$groups->name,'score'=>$groups->score);
-            $owner = Users::find($groups->users_id);
-            $data['leaderinfo'] = $owner;
-            $idlist = ActivityMember::where('activities_id','=',$request->input('id'))->select('users_id','role')->get();
-            foreach ($idlist as $key => $value) {
-                switch ($value->role) {
-                    case 0:
-                        $memberid = $memberid.$value->id.($key === (count($idlist)-1)?'':',');
-                        break;
-                    
-                    case 1:
-                        $deputyid = $deputyid.$value->id.($key === (count($idlist)-1)?'':',');
-                        break;
+            if($groups){
+                $data['activityinfo'] = $activity;
+                $data['groupsinfo'] = array('name'=>$groups->name,'score'=>$groups->score);
+
+                $owner = Users::find($groups->users_id);
+                if(!$owner){
+                    $owner = [];
                 }
+                $data['leaderinfo'] = $owner;
+                $idlist = ActivityMember::where('activities_id','=',$request->input('id'))->select('users_id','role')->get();
+                $deputyid = "";
+                $memberid = "";
+                foreach ($idlist as $key => $value) {
+                    switch ($value->role) {
+                        case 0:
+                            $memberid = $memberid.$value->id.($key === (count($idlist)-1)?'':',');
+                            break;
+                        
+                        case 1:
+                            $deputyid = $deputyid.$value->id.($key === (count($idlist)-1)?'':',');
+                            break;
+                    }
+                }
+                $deputys = [];
+                $members = [];
+                if(!empty($deputyid)){
+                    $deputys = Users::where('id','in','('.$deputyid.')')->get();
+                } 
+                $data['deputys'] = $deputys;//副领队列表
+                if(!empty($memberid)){
+                    $members = Users::where('id','in','('.$memberid.')')->get();
+                }
+                
+                $data['members'] = $members;//普通成员列表
+                return Common::returnResult('200','查询成功',$data);
+            }else{
+                return Common::returnResult('400','圈子不存在或者已经被禁用',[]);
             }
-            $deputys = Users::where('id','in','('.$deputyid.')')->get();
-            $data['deputys'] = $deputys;//副领队列表
-            $members = Users::where('id','in','('.$memberid.')')->get();
-            $data['members'] = $members;//普通成员列表
-            return Common::returnResult('200','查询成功',$data);
+            
     	}else{
     		return Common::returnResult('400','该记录不存在',"");
     	}

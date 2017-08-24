@@ -9,6 +9,7 @@ use App\Models\Groups;
 use App\Models\Users;
 use App\Models\ActivityMember;
 use App\Libraries\Common;
+// use App\Models\Groups;
 use UUID;
 
 class ActivitiesController extends Controller
@@ -17,6 +18,13 @@ class ActivitiesController extends Controller
      * 获取活动列表,非登录用户,查询所有活动
      */
     public function index(Request $request){
+        $pageindex = 0;
+        $pagesize = 5;
+        if($request->has('pageindex'))
+            $pageindex = $request->input('pageindex');
+        if($request->has('pagesize'))
+            $pagesize = $request->input('pagesize');
+
     	$list = Activities::where('is_able','=','1')
             ->where(function($query) use($request){
                 //searchtxt
@@ -24,10 +32,34 @@ class ActivitiesController extends Controller
             ->select('id','cover','title','starttime','endtime',
     				 'enrol_starttime','enrol_endtime','cost','limit_count','participation_count',
     				 'apply_count','status','keywords')
+            ->skip($pageindex*$pagesize)
+            ->take($pagesize)
     		->get();
     	return Common::returnResult('200','查询成功',$list);
     }
 
+    /**
+     *  查询圈子活动列表
+     */
+    public function groups_act(Request $request){
+        if(!$request->has('id'))
+            return Common::returnResult('400','参数错误',[]);
+        $group = Groups::find($request->input('id'));
+        if(!$group)
+            return Common::returnResult('400','圈子不存在或者已经被禁用',[]);
+        $pageindex = 0;
+        $pagesize = 5;
+        if($request->has('pageindex'))
+            $pageindex = $request->input('pageindex');
+        if($request->has('pagesize'))
+            $pagesize = $request->input('pagesize');
+
+        $list = Activities::where('groups_id',$request->input('id'))->select('id','cover','title','starttime','keywords','status','apply_count')
+        ->skip($pageindex*$pagesize)
+        ->take($pagesize)
+        ->get();
+        return Common::returnResult('200','获取成功',$list);
+    }
     /**
      * 获取活动详情
      */
@@ -50,22 +82,22 @@ class ActivitiesController extends Controller
                 foreach ($idlist as $key => $value) {
                     switch ($value->role) {
                         case 0:
-                            $memberid = $memberid.$value->id.($key === (count($idlist)-1)?'':',');
+                            $memberid = $memberid.$value->id.',';//($key === (count($idlist)-1)?'':',');
                             break;
                         
                         case 1:
-                            $deputyid = $deputyid.$value->id.($key === (count($idlist)-1)?'':',');
+                            $deputyid = $deputyid.$value->id.',';//($key === (count($idlist)-1)?'':',');
                             break;
                     }
                 }
                 $deputys = [];
                 $members = [];
                 if(!empty($deputyid)){
-                    $deputys = Users::where('id','in','('.$deputyid.')')->get();
+                    $deputys = Users::query('where id in ('.$deputyid.')')->get();
                 } 
                 $data['deputys'] = $deputys;//副领队列表
                 if(!empty($memberid)){
-                    $members = Users::where('id','in','('.$memberid.')')->get();
+                    $members = Users::query('where id in ('.$memberid.')')->get();
                 }
                 
                 $data['members'] = $members;//普通成员列表

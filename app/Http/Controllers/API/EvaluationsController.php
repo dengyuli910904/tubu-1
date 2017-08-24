@@ -17,7 +17,17 @@ class EvaluationsController extends Controller
      */
     public function index(Request $request)
     {
-        $list = Evaluations::where('activities_id','=',$request->input('activities_id'))->get();
+        $pageindex = 0;
+        $pagesize = 5;
+        if($request->has('pageindex'))
+            $pageindex = $request->input('pageindex');
+        if($request->has('pagesize'))
+            $pagesize = $request->input('pagesize');
+
+        $list = Evaluations::where('activities_id','=',$request->input('activities_id'))
+        ->skip($pagesize*$pageindex)
+        ->take($pagesize)
+        ->get();
         foreach ($list as $key => $value) {
             $user = Users::find($value->users_id);
             $list['userinfo'] = $user;

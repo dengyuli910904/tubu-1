@@ -58,6 +58,8 @@ $api->version('v1',function($api){
 		$api->post('/follow','GroupsFollowController@store');
 		//取消圈子
 		$api->delete('/follow','GroupsFollowController@destory');
+		//获取圈子的活动列表
+		$api->get('/groups_act','ActivitiesController@groups_act');
 	});
 
 	//活动接口
@@ -148,5 +150,10 @@ $api->version('v1',function($api){
 		$api->get('/followgroups','UsersController@watchCircle');
 		//我收藏的活动
 		$api->get('/collectacts','UsersController@favoriteActivity');
+
+		//我的审核消息
+		$api->get('/applymsg','UsersController@applymsg');
+		//我的通知消息
+		$api->get('/systemmsg','UsersController@systemmsg');
 	});
 });

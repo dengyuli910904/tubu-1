@@ -9,6 +9,7 @@ use App\Libraries\Common;
 use App\Models\GroupMember;
 use App\Models\Groups;
 use App\Models\Users;
+use App\Models\News;
 use UUID;
 
 class GroupsApplyController extends Controller
@@ -70,7 +71,8 @@ class GroupsApplyController extends Controller
             $apply = new GroupsApply();
             $apply->id = UUID::generate();
             $apply->groups_id = $request->input('groups_id');
-            $apply->users_id = $request->input('invite_users_id');
+            $apply->users_id = $request->input('users_id');
+            $apply->invite_users_id = $request->input('invite_users_id');
             $apply->type = 1;
             if($apply->save()){
                 return Common::returnResult(200,'邀请成功',"");
@@ -99,7 +101,7 @@ class GroupsApplyController extends Controller
 			$member = new GroupMember();
             $member->id = UUID::generate();
 			$member->groups_id = $apply->groups_id;
-			$member->users_id = $apply->users_id;
+			$member->users_id = $apply->type == 0 ?$apply->users_id: $apply->invite_users_id;
 			$member->save();
 		}else{
 			//不通过
@@ -107,6 +109,12 @@ class GroupsApplyController extends Controller
 		}
 
 		if($apply->save()){
+            $new = new News();
+            $new->id =  UUID::generate();
+            $new->users_id = $apply->type == 0 ?$apply->users_id: $apply->invite_users_id;
+            $new->content = $apply->status ==1?($apply->type == 1?'您的加入申请已经通过审核':'您邀请的用户已同意加入'):($apply->type == 1?'您的加入申请被拒绝':'您邀请的用户已拒绝加入');
+            $new->groups_id = $apply->groups_id;
+
 			return Common::returnResult(200,'修改成功',"");
 		}else{
 			return Common::returnResult(400,'修改失败',"");

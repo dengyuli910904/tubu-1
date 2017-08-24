@@ -18,7 +18,17 @@ class MessagesController extends Controller
      */
     public function index(Request $request)
     {
-        $list = Messages::where('activites_id','=',$request->input('activites_id'))->get();
+        $pageindex = 0;
+        $pagesize = 5;
+        if($request->has('pageindex'))
+            $pageindex = $request->input('pageindex');
+        if($request->has('pagesize'))
+            $pagesize = $request->input('pagesize');
+
+        $list = Messages::where('activites_id','=',$request->input('activites_id'))
+        ->skip($pagesize*$pageindex)
+        ->take($pagesize)
+        ->get();
         foreach ($list as $key => $value) {
             $user = Users::find($value->users_id);
             $list['userinfo'] = $user;

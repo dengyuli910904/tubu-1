@@ -30,6 +30,13 @@ class GroupsController extends Controller
      * 获取所有的圈子,圈子列表（首页）
      */
     public function index(Request $request){
+        $pageindex = 0;
+        $pagesize = 5;
+        if($request->has('pageindex'))
+            $pageindex = $request->input('pageindex');
+        if($request->has('pagesize'))
+            $pagesize = $request->input('pagesize');
+
     	$list = Groups::where(function($query) use ($request){
     		if($request->has('searchtxt')){
     			$query->where('name','like','%'.$request->input('searchtxt').'%');
@@ -41,6 +48,8 @@ class GroupsController extends Controller
     	})
         ->where('status','=','1')
     	->orderby('created_at','desc')
+        ->skip($pageindex*$pageindex)
+        ->take($pagesize)
     	->get();
 
         //若用户id不为空，则返回一个字段
@@ -80,8 +89,8 @@ class GroupsController extends Controller
      */
     public function show(Request $request){
     	if($request->has('id')){
-    		$gourps = Groups::find($request->input('id'));
-    		if(!empty($groups)){
+    		$groups = Groups::find($request->input('id'));
+    		if($groups){
     			$data['groupsinfo'] = $groups;
     			$owner = Users::find($groups->users_id);
     			if(!empty($owner)){
@@ -90,22 +99,33 @@ class GroupsController extends Controller
     			}
     			$data['owner'] = $owner;
     			// $data['member'] = array('users_id'=>$groups->users_id,);
+                $deputyid = "";
+                $memberid = "";
     			//参与的用户
     			$idlist = GroupMember::where('groups_id','=',$request->input('id'))->select('users_id','role')->get();
     			foreach ($idlist as $key => $value) {
     				switch ($value->role) {
     					case 0:
-    						$memberid = $memberid.$value->id.($key === (count($idlist)-1)?'':',');
+    						$memberid = $memberid.$value->users_id.',';//.($key === (count($idlist)-1)?'':',');
     						break;
     					
     					case 1:
-    						$deputyid = $deputyid.$value->id.($key === (count($idlist)-1)?'':',');
+    						$deputyid = $deputyid.$value->users_id.',';//.($key === (count($idlist)-1)?'':',');
     						break;
     				}
     			}
-    			$deputys = Users::where('id','in','('.$deputyid.')')->get();
+                $deputys = [];
+                $members = [];
+                // return $deputyid
+                if(!empty($deputyid)){
+                    $deputys = Users::query('where id in ('.$deputyid.')')->get();
+                }
+                
+    			
+                if(!empty($memberid)){
+                    $members = Users::query(' where id in ('.$memberid.')')->get();
+                }
     			$data['deputys'] = $deputys;//副圈主列表
-    			$members = Users::where('id','in','('.$memberid.')')->get();
     			$data['members'] = $members;//普通成员列表
 
     			return Common::returnResult(200,'查询成功',$data);

@@ -17,11 +17,21 @@ class AcitivityMemberController extends Controller
      */
     public function index(Request $request)
     {
+         $pageindex = 0;
+        $pagesize = 5;
+        if($request->has('pageindex'))
+            $pageindex = $request->input('pageindex');
+        if($request->has('pagesize'))
+            $pagesize = $request->input('pagesize');
+
         $list = ActivityMember::where('activities_id','=',$request->input('activities_id'))
         ->where(function($query) use ($request){
             // ，searchtxt
         })
-        ->select('users_id','role')->get();
+        ->skip($pagesize*$pageindex)
+        ->take($pagesize)
+        ->select('users_id','role')
+        ->get();
         foreach ($list as $key => $value) {
             switch ($value->role) {
                 case 0:

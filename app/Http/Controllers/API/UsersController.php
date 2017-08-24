@@ -313,7 +313,7 @@ class UsersController extends Controller
             ->join('groups as g','g.id','=','groups_apply.groups_id')
             ->whereIn('groups_apply.groups_id',$gid)
             ->orWhere('groups_apply.invite_users_id',$request->input('users_id'))
-            ->select('u.name','u.headimg','groups_apply.status','groups_apply.type','u.birthdate','u.sex','g.name as groupsname')
+            ->select('groups_apply.id','u.name','u.headimg','groups_apply.status','groups_apply.type','u.birthdate','u.sex','g.name as groupsname')
             ->orderby('groups_apply.created_at','desc')
             ->skip($pagesize*$pageindex)
             ->take($pagesize)
@@ -334,6 +334,7 @@ class UsersController extends Controller
                     break;
             }
         }
+        
         $data['list'] = $list;
         $data['is_latest'] = 1;//0 目前不是最新的，1 目前是最新的，可重新拉取
         // $groups = groups::query('select groups.id,groups.name groups_apply.status as statusss,groups_apply.users_id from groups join groups_apply  on groups_apply.groups_id = groups.id where id in ('.$gid.')')

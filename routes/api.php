@@ -45,7 +45,7 @@ $api->version('v1',function($api){
 		$api->post('/invite','GroupsApplyController@invite');
 		//审核用户加入圈子 @param id(申请记录id)，status(1 通过，2不通过)
 
-		$api->post('/doapply','GroupsController@update');
+		$api->put('/doapply','GroupsApplyController@update');
 
 		//设置成为领队 @param groups_id(圈子id)，users_id(成员id)
 		$api->put('/setrole','GroupsMemberController@setrole');

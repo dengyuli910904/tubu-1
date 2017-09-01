@@ -9,6 +9,7 @@ use App\Models\Groups;
 use App\Models\Users;
 use App\Models\ActivityMember;
 use App\Libraries\Common;
+use App\Models\ActivitiesCollect;
 // use App\Models\Groups;
 use UUID;
 
@@ -26,6 +27,7 @@ class ActivitiesController extends Controller
             $pagesize = $request->input('pagesize');
 
     	$list = Activities::where('is_able','=','1')
+            ->where('status','<>','0')
             ->where(function($query) use($request){
                 //searchtxt
             })
@@ -97,13 +99,20 @@ class ActivitiesController extends Controller
                 } 
                 $data['deputys'] = $deputys;//副领队列表
                 if(!empty($memberid)){
-                    $members = Users::query('where id in ('.$memberid.')')->get();
+                    $members = Users::query('where id in ('.$memberid.')')->take(4)->get();
                 }
                 
                 $data['members'] = $members;//普通成员列表
+
+                $collect = ActivitiesCollect::where('user_id',$request->input('users_id'))->where('activities_id',$request->input('id'))->first();
+                $data['is_collect'] = false;
+                if($collect){
+                    $data['is_collect'] = true;
+                }
+
                 return Common::returnResult('200','查询成功',$data);
             }else{
-                return Common::returnResult('400','圈子不存在或者已经被禁用',[]);
+                return Common::returnResult('204','圈子不存在或者已经被禁用',[]);
             }
             
     	}else{
@@ -123,11 +132,15 @@ class ActivitiesController extends Controller
     */
     public function store_part1(Request $request){
         if($request->has('id')){
+            $id = $request->input('id');
             $activity = Activities::find($request->input('id'));
         }else{
+
            $activity = new Activities(); 
-           $activity->id = UUID::generate();
+           $id = (string)UUID::generate();
+           $activity->id = $id;
         }
+        // return (string)$id;
         $activity->groups_id = $request->input('groups_id');
         $activity->keywords = $request->input('keywords');
         $activity->cover = $request->input('cover');
@@ -135,7 +148,7 @@ class ActivitiesController extends Controller
         $activity->content = "";
         $activity->cost_intro = "";
         if($activity->save()){
-            return Common::returnResult('200','保存成功',$activity);
+            return Common::returnResult('200','保存成功',['id' =>  $id ]);
         }else{
             return Common::returnResult('400','保存失败',"");
         }
@@ -146,9 +159,14 @@ class ActivitiesController extends Controller
     */
     public function store_part2(Request $request){
         $activity = Activities::find($request->input('id'));
+        if(!$activity){
+            return Common::returnResult('400','记录不存在',"");
+        }
         $activity->title = $request->input('title');
         $activity->starttime = $request->input('starttime');
         $activity->endtime = $request->input('endtime');
+        $activity->enrol_starttime = $request->input('enrol_starttime');
+        $activity->enrol_endtime = $request->input('enrol_endtime');
         $activity->limit_count = $request->input('limit_count');
         if($activity->save()){
             return Common::returnResult('200','保存成功',array('id'=>$activity->id));
@@ -162,6 +180,9 @@ class ActivitiesController extends Controller
     */
     public function store_part3(Request $request){
         $activity = Activities::find($request->input('id'));
+        if(!$activity){
+            return Common::returnResult('400','记录不存在',"");
+        }
         $activity->contacts = $request->input('contacts');
         $activity->contacts_tel = $request->input('contacts_tel');
         $activity->content = $request->input('content');
@@ -177,8 +198,12 @@ class ActivitiesController extends Controller
     */
     public function store_part4(Request $request){
         $activity = Activities::find($request->input('id'));
+        if(!$activity){
+            return Common::returnResult('400','记录不存在',"");
+        }
         $activity->cost = $request->input('cost');
         $activity->cost_intro = $request->input('cost_intro');
+        $activity->status = 1;
         if($activity->save()){
             return Common::returnResult('200','保存成功',array('id'=>$activity->id));
         }else{
@@ -190,6 +215,9 @@ class ActivitiesController extends Controller
      */
     public function update(Request $request){
         $activity = Activities::find($request->input('id'));
+        if(!$activity){
+            return Common::returnResult('400','记录不存在',"");
+        }
         //正式发布，结束报名，取消活动
         switch ($request->input('step')) {
             case 1:
@@ -213,7 +241,7 @@ class ActivitiesController extends Controller
                 return Common::returnResult('400','保存失败',"");
             }
         }else{
-            return Common::returnResult('400','无任何更新',"");
+            return Common::returnResult('204','无任何更新',"");
         }
     }
 }

@@ -1,0 +1,7 @@
+.bg-main{ background-color: rgb(255,148,61);}
+.font-white{ color: #fff;}
+.b-l-white{ border-left:1px solid #fff;}
+.b-l-main{ border-left:1px solid rgb(255,148,61);}
+.b-b-main{ border-bottom:1px solid rgb(255,148,61);}
+/*.row div{ padding:10px;}*/
+.toolstable tbody tr td{ border-bottom:1px solid rgb(255,148,61);}

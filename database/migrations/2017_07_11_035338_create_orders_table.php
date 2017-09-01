@@ -22,6 +22,7 @@ class CreateOrdersTable extends Migration
             $table->integer('status')->nullable();//z支付状态码
             $table->string('title')->nullable();//订单标题
             $table->integer('is_valid')->default(0);// 0 未验证，1已验证
+            $table->string('channel',20)->default('');//支付方式 alipay,wx
             $table->timestamps();
         });
     }

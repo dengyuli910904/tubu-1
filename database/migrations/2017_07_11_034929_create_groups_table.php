@@ -28,6 +28,7 @@ class CreateGroupsTable extends Migration
             $table->string('users_id')->nullable();//创建者id
 
             $table->integer('score')->default(10);//圈子分数，以分数来区分等级
+            $table->integer('is_pass')->default(0);//是否审核通过，0 未审核 ;1 审核通过 ；2 审核不通过
             $table->integer('status')->default(1);//默认正常 0 禁用 1启用
             $table->timestamps();
         });

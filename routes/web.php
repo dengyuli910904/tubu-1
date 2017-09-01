@@ -10,13 +10,9 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-$api = app('Dingo\Api\Routing\Router');
+// $api = app('Dingo\Api\Routing\Router');
 
-// $api->version('v1',function($api){
-// 	$api->group(['namespace' => 'App\Http\Controllers\API','prefix'=>'groups'], function ($api) {
-// 		$api->get('/groups','GroupsController@groups');
-// 	});
-// });
+
 
 
 // Route::prefix('admin')
@@ -32,10 +28,14 @@ Route::prefix('admin')
 	->namespace('Admin')
 	->group(base_path('routes/admin.php'));
 
+Route::get('/test',function(){
+	return view('welcome');
+});
 
 Route::group(['prefix'=>'web','namespace'=>'Admin'],function(){
 	// Route::group(['prefix'=>'activity'],function(){
 		Route::resource('activity','ActivitiesController');
+		Route::resource('groups','GroupsController');
 	// });
 });
 
@@ -51,5 +51,7 @@ Route::group(['namespace' => 'Common'],function(){
 });
 
 //发送短信
-Route::post('/sendsms','SmsController@sendmsg');
+Route::post('/sendsms','API\VerifyCodeController@sendcode');
+
 //支付功能（微信支付、支付宝支付）
+Route::get('/pay','SmsController@pp');

@@ -131,6 +131,8 @@ $api->version('v1',function($api){
 	$api->group(['namespace'=> 'App\Http\Controllers\API','prefix' => 'user'],function($api){
 		//登录
 		$api->post('/login','UsersController@login');
+		//注册
+		$api->post('/register','UsersController@register');
 		//我的消息
 		$api->get('/messages','UsersController@myMesage');
 		//我的评价
@@ -155,5 +157,14 @@ $api->version('v1',function($api){
 		$api->get('/applymsg','UsersController@applymsg');
 		//我的通知消息
 		$api->get('/systemmsg','UsersController@systemmsg');
+	});
+
+	//公用
+	$api->group(['namespace'=>'App\Http\Controllers\API','prefix'=>'order'],function($api){
+		$api->get('/alipay','OrdersController@alipay');
+		$api->get('/alistatus','OrdersController@alistatus');
+		$api->post('/payinfo','OrdersController@store');
+		$api->post('/paystatus','OrdersController@update');
+		$api->post('/getcharge','OrdersController@getcharge');
 	});
 });

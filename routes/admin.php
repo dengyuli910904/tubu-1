@@ -13,6 +13,24 @@ use Illuminate\Foundation\Inspiring;
 |
 */
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->describe('Display an inspiring quote');
+// Artisan::command('inspire', function () {
+//     $this->comment(Inspiring::quote());
+// })->describe('Display an inspiring quote');
+
+// $api = app('Dingo\Api\Routing\Router');
+// $api->version('v1',function($api){
+// 	$api->group(['namespace' => 'App\Http\Controllers\Admin'],function($api){
+// 		$api->resource('group','GroupsController');
+// 	});
+// });
+
+// Route::get('/mgroup','GroupsController@index');
+
+// Route::get('/mgroup',function(){
+// 	return view('admin.login');
+// });
+Route::get('/login',function(){
+	return view('admin.login');
+});
+
+Route::resource('/mgroup','GroupsController');

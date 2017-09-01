@@ -105,6 +105,7 @@ return [
     |
     */
     'templates' => [
+        'Aliyun' =>'SMS_87135014',
     ],
 
     /*
@@ -158,7 +159,7 @@ return [
     |
     */
     'storage' => [
-        'driver' => '',
+        'driver' => 'Aliyun',
         'prefix' => 'laravel_sms',
     ],
 

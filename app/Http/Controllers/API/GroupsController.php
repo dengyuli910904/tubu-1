@@ -19,7 +19,13 @@ class GroupsController extends Controller
      */
     public function groups(Request $request){
         //需要用户所在的圈子，并且用户为该圈子的领队
-        $list = Groups::where('status','=','1')->select('id','name')->get();
+        if(!$request->has('users_id')){
+            return Common::returnResult(400,'参数错误');
+        }
+        $list = Groups::join('groupmember as g','g.groups_id','=','groups.id')
+             ->where('groups.status','=','1')
+             ->where('g.role','1')
+             ->select('groups.id','groups.name')->get();
         // if(!count($list)){
         //     return Common::returnResult(200,'获取成功',"");
         // }
@@ -131,7 +137,7 @@ class GroupsController extends Controller
     			return Common::returnResult(200,'查询成功',$data);
     		}
     		else{
-    			return Common::returnResult(400,'该记录不存在',"");
+    			return Common::returnResult(204,'该记录不存在',"");
     		}
     	}else{
     		return Common::returnResult(400,'参数不正确',"");
@@ -156,7 +162,7 @@ class GroupsController extends Controller
              }
          }
          else{
-             return Common::returnResult(400,'该记录不存在',"");
+             return Common::returnResult(204,'该记录不存在',"");
          }
      }else{
          return Common::returnResult(400,'参数不正确',"");
@@ -182,7 +188,7 @@ class GroupsController extends Controller
                 return Common::returnErrorResult(400,'创建失败',"");
             }
         }else{
-            return Common::returnErrorResult(400,'该圈子已存在',"");
+            return Common::returnErrorResult(201,'该圈子已存在',"");
         }
         
     }
@@ -216,7 +222,7 @@ class GroupsController extends Controller
             }
             return Common::returnResult(200,'获取成功',$data);
         }else{
-            return Common::returnResult(400,'该记录不存在','');
+            return Common::returnResult(204,'该记录不存在','');
         }
     }
     

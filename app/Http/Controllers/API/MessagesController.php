@@ -29,16 +29,28 @@ class MessagesController extends Controller
         ->skip($pagesize*$pageindex)
         ->take($pagesize)
         ->get();
+        // $data = [];
         foreach ($list as $key => $value) {
-            $user = Users::find($value->users_id);
-            $list['userinfo'] = $user;
+            // $arr = [];
+            $user = Users::select('id','name','headimg','birthdate','sex')->find($value->users_id);
+            $value['userinfo'] = [];
+            if($user)
+            {
+                $user->age =18;
+                $value['userinfo'] = $user;
+            }
+            $value['replayuser'] = [];
+            // $list['userinfo'] = $user;
             if($value->parent_id != ""){
                 $message = Messages::find($value->id);
-                $u = Users::find($message->users_id);
-                $list['replayuser'] = $u;
-            }else{
-                $list['replayuser'] = array();
+                $u = Users::select('id','name','headimg','birthdate','sex')->find($message->users_id);
+                if($u)
+                {
+                    $u->age =18;
+                    $value['replayuser'] = $u;
+                }
             }
+            // array_push($data, $arr);
         }
         return Common::returnResult('200','查询成功',$list);
     }
@@ -116,7 +128,7 @@ class MessagesController extends Controller
                 return Common::returnResult('400','修改失败',"");
             }
         }else{
-            return Common::returnResult('400','记录不存在',"");
+            return Common::returnResult('204','记录不存在',"");
         }
     }
 

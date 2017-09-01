@@ -14,7 +14,7 @@ class GroupsFollowController extends Controller
      * 关注圈子
      */
     public function store(Request $request){
-    	$follow = GroupsFollow::where('groups_id',$request->input('groups_id'))->where('user_id',$request->input('user_id'))->first();
+    	$follow = GroupsFollow::where('groups_id',$request->input('groups_id'))->where('user_id',$request->input('users_id'))->first();
     	if(!$follow){
     		$follow = new GroupsFollow();
     		$follow->id = UUID::generate();
@@ -26,7 +26,7 @@ class GroupsFollowController extends Controller
     			return Common::returnErrorResult(400,'关注失败');
     		}
     	}else{
-    		return Common::returnErrorResult(400,'您已关注该圈子');
+    		return Common::returnErrorResult(201,'您已关注该圈子');
     	}
     }
 
@@ -34,7 +34,7 @@ class GroupsFollowController extends Controller
      * 取消关注
      */
     public function destory(Request $request){
-    	$follow = GroupsFollow::where('groups_id',$request->input('groups_id'))->where('user_id',$request->input('user_id'))->first();
+    	$follow = GroupsFollow::where('groups_id',$request->input('groups_id'))->where('user_id',$request->input('users_id'))->first();
     	if($follow){
     		if($follow->delete()){
     			return Common::returnSuccessResult(200,'取消成功',[]);
@@ -43,7 +43,7 @@ class GroupsFollowController extends Controller
     			return Common::returnErrorResult(200,'取消失败');
     		}
     	}else{
-    		return Common::returnErrorResult(200,'您还未关注该圈子');
+    		return Common::returnErrorResult(204,'您还未关注该圈子');
     	}
     }
 }

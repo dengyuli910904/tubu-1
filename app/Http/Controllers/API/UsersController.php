@@ -17,6 +17,7 @@ use App\Models\ActivitiesCollect;
 use App\Models\GroupsApply;
 use App\Models\Groups;
 use App\Models\News;
+use App\Models\VerifyCode;
 use DB;
 
 class UsersController extends Controller
@@ -39,6 +40,41 @@ class UsersController extends Controller
             return Common::returnSuccessResult('200', "登录成功", $user);
         } else {
             return Common::returnErrorResult('400', "用户名或密码错误");
+        }
+    }
+
+    /**
+     * 第三方授权登陆
+     */
+    public function third_party_login(Request $request){
+        
+    }
+    /**
+     * 注册
+     */
+    public function register(Request $request){
+        $code = Verifycode::where('id',$request->input('code_id'))->where('code',$request->input('code'))->first();
+        if($valid){
+            $valid->is_valid = 1;
+            $valid->save();
+            $user = Users::where('telphone',$request->input('phone'))->first();
+            if(!$user){
+                $solt = UUID::generate();
+                $user = new Users();
+                $user->id = UUID::generate();
+                $user->telphone = $request->input('phone');
+                $user->solt = $solt;
+                $user->pwd = md5($request->input('pwd').$solt);
+                if($user->save()){
+                    return Common::returnSuccessResult('201', "注册成功");
+                }else{
+                    return Common::returnSuccessResult('400', "注册失败");
+                }
+            }else{
+                return Common::returnSuccessResult('201', "该手机号已注册");
+            }
+        }else{
+            return Common::returnSuccessResult("201",'验证码错误');   
         }
     }
 

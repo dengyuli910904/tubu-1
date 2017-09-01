@@ -94,6 +94,17 @@ class Common
         return rand(pow(10,($length-1)), pow(10,$length)-1);
     }
 
+    /**
+     * 正常请求返回方法
+     */
+    public function returnsuccess($msg,$restult){
+        if(empty($restult)){
+            return response()->json(array('code'=>200,'msg'=>$msg));
+        }
+        return response()->json(array('code'=>200,'msg'=>$msg,'data'=>$restult));
+    }
+
+
 
     /**
      * 公用返回方法
@@ -102,6 +113,9 @@ class Common
         if($code >=300){
             return response()->json(array('code'=>$code,'msg'=>$msg));
         }else{
+            if(empty($restult)){
+                return response()->json(array('code'=>$code,'msg'=>$msg));
+            }
             return response()->json(array('code'=>$code,'msg'=>$msg,'data'=>$restult));
         }
     }
@@ -109,6 +123,9 @@ class Common
      * 公用返回错误方法
      */
     public static function returnSuccessResult($code,$msg,$restult){
+        if(empty($restult)){
+            return response()->json(array('code'=>$code,'msg'=>$msg));
+        }
         return response()->json(array('code'=>$code,'msg'=>$msg,'data'=>$restult));
     }
     /**

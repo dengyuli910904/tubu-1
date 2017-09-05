@@ -43,7 +43,15 @@ Route::get('/',function(){
 	return view('web.activity.act_publish');
 });
 
-
+//分享
+Route::group(['prefix'=>'share'],function(){
+	Route::get('activity',function(){
+		return view('web.share.activity');
+	});
+	Route::get('group',function(){
+		return view('web.share.group');
+	});
+});
 //图片上传
 Route::group(['namespace' => 'Common'],function(){
     Route::any('/upload','UeditorController@server');

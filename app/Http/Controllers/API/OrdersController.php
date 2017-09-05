@@ -29,7 +29,7 @@ class OrdersController extends Controller
         $orders->title = $act->title;
     	$orders->ordernum = $code;
         $orders->user_id = $request->input('users_id');
-    	$orders->sum = 1;
+    	$orders->sum = (float)$act->cost;
         $orders->channel = $request->input('channel');
     	if($orders->save()){
             // Pingpp::setApiKey('sk_test_DCSiv9D8GGGOnX9yD8TyPG04');
@@ -42,7 +42,7 @@ class OrdersController extends Controller
              // return $id;
             $result = Pingpp\Charge::create(
                 array('order_no'  => $code = $code,
-                    'amount'    => $orders->sum,//订单总金额, 人民币单位：分（如订单总金额为 1 元，此处请填 100）
+                    'amount'    => (float)$orders->sum*100,//订单总金额, 人民币单位：分（如订单总金额为 1 元，此处请填 100）
                     'app'       => array('id' => 'app_KqrrLGTOW5CODabT'),
                     'channel'   => $request->input('channel'),
                     'currency'  => 'cny',
@@ -51,7 +51,7 @@ class OrdersController extends Controller
                     'body'      => $act->title
                     )
                 );
-        return $result;
+        // return $result;
     		return Common::returnSuccessResult(200,'订单生成成功',json_encode($result));
     	}else{
     		return Common::returnErrorResult(400,'订单生成失败');	
@@ -83,19 +83,31 @@ class OrdersController extends Controller
      * 订单状态变更
      */
     public function update(Request $request){
-        $json = $request; 
+        // $json = $request; 
         // return $json;
+        
+        $data = $request->input('data');
+        
+        $obj = $data['object'];
+        // return Common::returnSuccessResult(200,'订单不存在',$data);
+
     	$orders = Orders::where('id',$request->input('id'))->first();
         if($orders)
         {
-            $orders->status = 0;
-            if($json->type == 'charge.succeeded'){
-                $orders->status = 1;
+            if((float)$obj->amount == (float)$orders->num*100){
+                $orders->status = 0;
+                if($json->type == 'charge.succeeded'){
+                    $orders->status = 1;
+                }
+                $orders->save();
+                return Common::returnSuccessResult(200,'success',"");
+            }else{
+                return Common::returnSuccessResult(200,'支付金额不一致',"");
             }
-            $orders->save();
-            // return Common::returnSuccessResult(200,'订单生成成功',$result);
+        }else{
+            return Common::returnSuccessResult(200,'订单不存在',"");
         }
-        return Common::returnSuccessResult(200,'success',"");
+        
     	// $orders
     	// 根据返回的数据设置支付状态
     }

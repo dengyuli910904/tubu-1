@@ -32,12 +32,13 @@ class VerifyCodeController extends Controller
         // return $result;
         if($result['success']){
         	$vcode = new Verifycode();
-        	$vcode->id = UUID::generate();
+            $id = UUID::generate();
+        	$vcode->id = $id;
         	$vcode->phone = $to;
         	$vcode->code = $code;
         	$vcode->comment = '';
         	$vcode->save();
-        	return Common::returnSuccessResult(201,'发送成功','');
+        	return Common::returnSuccessResult(200,'发送成功',['id'=>(string)$id]);
         }else{
         	$logs = $result['logs'];
         	// return $logs;

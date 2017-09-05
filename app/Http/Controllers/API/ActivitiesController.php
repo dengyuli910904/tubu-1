@@ -37,6 +37,22 @@ class ActivitiesController extends Controller
             ->skip($pageindex*$pagesize)
             ->take($pagesize)
     		->get();
+            foreach ($list as $val) {
+                 switch ($val->status) {
+                    case 1:
+                        $val->status_text = '报名中'; //正式发布状态
+                        break;
+                    case 2:
+                        $val->status_text = '报名结束'; //结束报名状态
+                        break;
+                    case 3:
+                        $val->status_text = '活动已取消'; //取消活动
+                        break;
+                    case 4:
+                        $val->status_text = '活动已结束'; //结束活动
+                        break;
+                }
+            }
     	return Common::returnResult('200','查询成功',$list);
     }
 
@@ -69,7 +85,26 @@ class ActivitiesController extends Controller
     	$activity = Activities::find($request->input('id'));
     	if(!empty($activity)){
             $groups = Groups::find($activity->groups_id);
+            $activity->status_text = '待发布'; //结束活动
             if($groups){
+                switch ($activity->status) {
+                    case 1:
+                        $activity->status_text = '报名中'; //正式发布状态
+                        break;
+                    case 2:
+                        $activity->status_text = '报名结束'; //结束报名状态
+                        break;
+                    case 3:
+                        $activity->status_text = '活动已取消'; //取消活动
+                        break;
+                    case 4:
+                        $activity->status_text = '活动已结束'; //结束活动
+                        break;
+                    default:
+                        $activity->status_text = '待发布'; //结束活动
+                        break;
+                }
+
                 $data['activityinfo'] = $activity;
                 $data['groupsinfo'] = array('name'=>$groups->name,'score'=>$groups->score);
 
@@ -109,6 +144,20 @@ class ActivitiesController extends Controller
                 if($collect){
                     $data['is_collect'] = true;
                 }
+
+                $member = ActivityMember::where('users_id',$request->input('users_id'))->where('activities_id',$request->input('id'))->first();
+                $data['is_sign_in'] = false;
+                $data['is_pay'] = false;
+                if((float)$activity->cost <=0){
+                    $data['is_pay'] = true;
+                }
+                if($member){
+                    if($member->is_pay == 1){
+                        $data['is_pay'] = true;
+                    }
+                    $data['is_sign_in'] = true;
+                }
+
 
                 return Common::returnResult('200','查询成功',$data);
             }else{

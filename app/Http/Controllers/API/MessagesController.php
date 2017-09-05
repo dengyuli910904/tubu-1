@@ -25,7 +25,7 @@ class MessagesController extends Controller
         if($request->has('pagesize'))
             $pagesize = $request->input('pagesize');
 
-        $list = Messages::where('activites_id','=',$request->input('activites_id'))
+        $list = Messages::where('activites_id','=',$request->input('activities_id'))
         ->skip($pagesize*$pageindex)
         ->take($pagesize)
         ->get();
@@ -77,7 +77,7 @@ class MessagesController extends Controller
         $message->id = UUID::generate();
         $message->users_id = $request->input('users_id');
         $message->content = $request->input('content');
-        $message->activites_id = $request->input('activites_id');
+        $message->activites_id = $request->input('activities_id');
         if($request->has('parent_id')){
             $message->parent_id = $request->input('parent_id');
         }

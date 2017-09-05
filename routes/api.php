@@ -157,6 +157,22 @@ $api->version('v1',function($api){
 		$api->get('/applymsg','UsersController@applymsg');
 		//我的通知消息
 		$api->get('/systemmsg','UsersController@systemmsg');
+
+		//修改用户信息-电话
+		$api->put('/tel','UsersController@alter_tel');
+		//修改用户信息-头像
+		$api->put('/headimg','UsersController@alter_img');
+		//修改用户信息-性别
+		$api->put('/sex','UsersController@alter_sex');
+		//修改用户信息-出生日期
+		$api->put('/birth','UsersController@alter_birth');
+		//修改用户信息-昵称
+		$api->put('/name','UsersController@alter_name');
+
+		//第三方登陆
+		$api->post('/login_wx','UsersController@third_party_wx_login');
+		$api->post('/login_qq','UsersController@third_party_qq_login');
+		$api->post('/login_sina','UsersController@third_party_sina_login');
 	});
 
 	//公用

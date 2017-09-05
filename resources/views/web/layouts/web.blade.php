@@ -19,7 +19,7 @@
     <!-- Navigation -->
     @include('web.profile.header')
    
-    <div class="wrapper container-fluid">
+    <div class="container">
          @yield('content')
     </div>
 

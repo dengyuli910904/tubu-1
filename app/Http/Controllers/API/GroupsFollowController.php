@@ -14,6 +14,10 @@ class GroupsFollowController extends Controller
      * 关注圈子
      */
     public function store(Request $request){
+        $group = Groups::find($request->input('groups_id'));
+        if(!$group)
+            return Common::returnResult(204,'该圈子信息不存在',"");
+
     	$follow = GroupsFollow::where('groups_id',$request->input('groups_id'))->where('user_id',$request->input('users_id'))->first();
     	if(!$follow){
     		$follow = new GroupsFollow();
@@ -21,6 +25,8 @@ class GroupsFollowController extends Controller
     		$follow->groups_id = $request->input('groups_id');
     		$follow->user_id = $request->input('user_id');
     		if($follow->save()){
+                $group->focus_count = (int)$group->focus_count +1;
+                $group->save();
     			return Common::returnSuccessResult(200,'关注成功',[]);
     		}else{
     			return Common::returnErrorResult(400,'关注失败');
@@ -34,9 +40,16 @@ class GroupsFollowController extends Controller
      * 取消关注
      */
     public function destory(Request $request){
+        $group = Groups::find($request->input('groups_id'));
+        if(!$group)
+            return Common::returnResult(204,'该圈子信息不存在',"");
+
     	$follow = GroupsFollow::where('groups_id',$request->input('groups_id'))->where('user_id',$request->input('users_id'))->first();
     	if($follow){
     		if($follow->delete()){
+                $group->focus_count = (int)$group->focus_count -1;
+                $group->save();
+
     			return Common::returnSuccessResult(200,'取消成功',[]);
     		}
     		else{

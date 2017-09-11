@@ -37,6 +37,7 @@ class GroupsApplyController extends Controller
             $apply->users_id = $request->input('users_id');
             $apply->type = 0;
             if($apply->save()){
+                // News::send_group_msg($group->users_id,$request->input('groups_id'),'您有新的用户申请');
                 return Common::returnResult(200,'申请成功',"");
             }else{
                 return Common::returnResult(400,'申请失败',"");
@@ -75,6 +76,7 @@ class GroupsApplyController extends Controller
             $apply->invite_users_id = $request->input('invite_users_id');
             $apply->type = 1;
             if($apply->save()){
+                News::send_group_msg($request->has('invite_users_id'),$request->input('groups_id'),$group->name.' 邀请您加入');
                 return Common::returnResult(200,'邀请成功',"");
             }else{
                 return Common::returnResult(400,'邀请失败',"");
@@ -90,13 +92,17 @@ class GroupsApplyController extends Controller
         
     	if(!$request->has('id'))
             return Common::returnResult(400,'参数不正确',"");
-
 		$apply = GroupsApply::find($request->input('id'));
-		if(empty($apply))
+		if(!$apply)
             return Common::returnResult(204,'该记录不存在',"");
+
+        $group = Groups::find($apply->groups_id);
+        if(!$group)
+             return Common::returnResult(204,'圈子已经解散或者被禁用该记录不存在',"");
 
 		if($request->input('status') == 1){
 			//通过
+
 			$apply->status = 1;//
             $member = GroupMember::where('groups_id',$apply->groups_id)->where(function($query) use ($apply){
                 $query->where('users_id', $apply->users_id)
@@ -115,12 +121,19 @@ class GroupsApplyController extends Controller
 		}
 
 		if($apply->save()){
-            $new = new News();
-            $new->id =  UUID::generate();
-            $new->users_id = $apply->type == 0 ?$apply->users_id: $apply->invite_users_id;
-            $new->content = $apply->status ==1?($apply->type == 1?'您的加入申请已经通过审核':'您邀请的用户已同意加入'):($apply->type == 1?'您的加入申请被拒绝':'您邀请的用户已拒绝加入');
-            $new->groups_id = $apply->groups_id;
+            if($apply->status = 1){
+                $group->member_count = (int)$group->member_count +1;
+                $group->save();
+            }
+           
+            // $new = new News();
+            // $new->id =  UUID::generate();
+            $users_id = $apply->type == 0 ?$apply->users_id: $apply->invite_users_id;
+            $content = $apply->status ==1?($apply->type == 1?'您的加入申请已经通过审核':'您邀请的用户已同意加入'):($apply->type == 1?'您的加入申请被拒绝':'您邀请的用户已拒绝加入');
+            // $new->groups_id = $apply->groups_id;
 
+            // $new->save();
+            News::send_group_msg($users_id,$apply->groups_id,$content);
 			return Common::returnResult(200,'修改成功',"");
 		}else{
 			return Common::returnResult(400,'修改失败',"");

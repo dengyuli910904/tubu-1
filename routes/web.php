@@ -45,12 +45,19 @@ Route::get('/',function(){
 
 //分享
 Route::group(['prefix'=>'share'],function(){
-	Route::get('activity',function(){
-		return view('web.share.activity');
-	});
-	Route::get('group',function(){
-		return view('web.share.group');
-	});
+	// Route::get('activity',function(){
+	// 	return view('web.share.activity');
+	// });
+	Route::get('group','API\GroupsController@info');
+	Route::get('activity','API\ActivitiesController@info');
+	// Route::get('group',function(){
+	// 	return view('web.share.group');
+	// });
+});
+
+//免责声明
+Route::get('disclaimer',function(){
+	return view('web.protocol.index');
 });
 //图片上传
 Route::group(['namespace' => 'Common'],function(){
@@ -63,3 +70,6 @@ Route::post('/sendsms','API\VerifyCodeController@sendcode');
 
 //支付功能（微信支付、支付宝支付）
 Route::get('/pay','SmsController@pp');
+
+//极光推送
+Route::post('/jpush','API\NewsController@sendmsg');

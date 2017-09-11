@@ -74,23 +74,23 @@
     <div>
         <section>
             <div class="row" style="text-align:center;">
-                <img src="{{ asset('web/img/user.png')}}" class="img-rounded" style=" margin:20px auto;"/>
-                <h4  class="head">深圳湾徒步旅行团</h4>
+                <img src="{{$data['groups']['cover']}}" class="img-rounded img-responsive" style=" margin:20px auto; width:150px; "/>
+                <h4  class="head">{{$data['groups']['name']}}</h4>
                 <p>
-                    <span>深圳南山</span>
+                    <span>{{$data['groups']['address']}}</span>
                 </p>
             </div>
             <div class="row g-head">
                 <div class="col-xs-4 item">
-                    <h4>14</h4>
+                    <h4>{{$data['groups']['score']}}</h4>
                     <p>等级</p>
                 </div>
                 <div class="col-xs-4 item">
-                    <h4>530</h4>
+                    <h4>{{$data['groups']['member_count']}}</h4>
                     <p>人数</p>
                 </div>
                 <div class="col-xs-4 item">
-                    <h4>325</h4>
+                    <h4>{{$data['groups']['focus_count']}}</h4>
                     <p>关注</p>
                 </div>
             </div>
@@ -99,14 +99,14 @@
             <div class="row">
                 <h4>简介</h4>
                 <div class="col-xs-12">
-                    徒步旅行，迈开新自我！
+                    {{$data['groups']['intro']}}
                 </div>
             </div>
             <hr/>
             <div class="row">
                 <h4>创建时间</h4>
                 <div class="col-xs-12">
-                    2017-09-04
+                    {{$data['groups']['created_at']}}
                 </div>
             </div>
         </section>
@@ -114,20 +114,20 @@
         <section>
             <div class="row">
                 <div class="col-xs-2 leader">
-                    <img src="{{ asset('web/img/user.png')}}" class="img-circle user-img">
+                    <img src="{{ $data['owner']['headimg']}}" class="img-circle user-img">
                 </div>
+                @foreach($data['members'] as $m)
                 <div class="col-xs-2">
-                    <img src="{{ asset('web/img/user.png')}}" class="img-circle user-img">
+                    <img src="{{ $m->headimg }}" class="img-circle user-img">
                 </div>
-                <div class="col-xs-2">
+                @endforeach
+                <!-- <div class="col-xs-2">
                     <img src="{{ asset('web/img/user.png')}}" class="img-circle user-img">
                 </div>
                 <div class="col-xs-2 add">
                     <img src="{{ asset('web/img/user.png')}}" class="img-circle user-img">
-                </div>
-                <div class="col-xs-4" style="line-height:50px;">
-                    120/200人
-                </div>
+                </div> -->
+                
                 <!-- <div class="col-xs-1">
                     <span class="glyphicon glyphicon-menu-right" aria-hidden="true"  style="line-height:50px;"></span>
                 </div> -->
@@ -141,54 +141,25 @@
             </div>
             <!-- <hr/> -->
             <div class="act-list">
+                @foreach($data['activity'] as $act)
                 <div class="row">
                     <div class="col-xs-5">
-                        <img src="{{ asset('web/img/img.png')}}" class="img-rounded img-responsive">
+                        <img src="{{ $act->cover }}" class="img-rounded img-responsive">
                     </div>
                     <div class="col-xs-7">
-                        <h5>深圳换了徒步下机型</h5>
+                        <h5>{{ $act->title}}</h5>
                         <p>
                             <span class="label label-warning">即将开始</span>
                             <span class="label label-danger">徒步</span>
                         </p>
                         <p>
-                            <span class="glyphicon glyphicon-user">120</span>
+                            <span class="glyphicon glyphicon-user">{{ $act->apply_count }}</span>
                         </p>
-                        <p>2017-09-03</p>
+                        <p>{{ $act->created_at}}</p>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-xs-5">
-                        <img src="{{ asset('web/img/img.png')}}" class="img-rounded img-responsive">
-                    </div>
-                    <div class="col-xs-7">
-                        <h5>深圳换了徒步下机型</h5>
-                        <p>
-                            <span class="label label-warning">即将开始</span>
-                            <span class="label label-danger">徒步</span>
-                        </p>
-                        <p>
-                            <span class="glyphicon glyphicon-user">120</span>
-                        </p>
-                        <p>2017-09-03</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-5">
-                        <img src="{{ asset('web/img/img.png')}}" class="img-rounded img-responsive">
-                    </div>
-                    <div class="col-xs-7">
-                        <h5>深圳换了徒步下机型</h5>
-                        <p>
-                            <span class="label label-warning">即将开始</span>
-                            <span class="label label-danger">徒步</span>
-                        </p>
-                        <p>
-                            <span class="glyphicon glyphicon-user">120</span>
-                        </p>
-                        <p>2017-09-03</p>
-                    </div>
-                </div>
+                @endforeach
+                
             </div>
         </section>
        

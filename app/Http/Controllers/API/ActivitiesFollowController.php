@@ -14,6 +14,10 @@ class ActivitiesFollowController extends Controller
      * 关注活动
      */
     public function store(Request $request){
+        $act = Activities::find($request->input('activities_id'));
+        if(!$act)
+            return Common::returnResult(204,'该活动信息不存在',"");
+
     	$follow = ActivitiesFollow::where('activities_id',$request->input('activities_id'))->where('user_id',$request->input('users_id'))->first();
     	if(!$follow){
     		$follow = new ActivitiesFollow();
@@ -21,6 +25,9 @@ class ActivitiesFollowController extends Controller
     		$follow->activities_id = $request->input('activities_id');
     		$follow->user_id = $request->input('user_id');
     		if($follow->save()){
+                $act->collect_count = (int)$act->follow_count +1;
+                $act->save();
+
     			return Common::returnSuccessResult(200,'关注成功','');
     		}else{
     			return Common::returnErrorResult(400,'关注失败');
@@ -34,9 +41,16 @@ class ActivitiesFollowController extends Controller
      * 取消关注
      */
     public function destory(Request $request){
+         $act = Activities::find($request->input('activities_id'));
+        if(!$act)
+            return Common::returnResult(204,'该活动信息不存在',"");
+
     	$follow = ActivitiesFollow::where('activities_id',$request->input('activities_id'))->where('user_id',$request->input('users_id'))->first();
     	if($follow){
     		if($follow->delete()){
+                 $act->collect_count = (int)$act->follow_count -1;
+                $act->save();
+
     			return Common::returnSuccessResult(200,'取消成功','');
     		}
     		else{

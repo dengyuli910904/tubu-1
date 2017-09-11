@@ -9,6 +9,11 @@ use App\Libraries\Common;
 use App\Models\Activities;
 use UUID;
 use Pingpp;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Log;
+use App\Models\ActivityMember;
+
 class OrdersController extends Controller
 {
     /**
@@ -85,27 +90,42 @@ class OrdersController extends Controller
     public function update(Request $request){
         // $json = $request; 
         // return $json;
-        
+        $log = new Logger('register');
+        $log->pushHandler(new StreamHandler(storage_path('logs/orderinfo.log'),Logger::INFO) );
+        // $log->addInfo('用户注册信息:'.$request);
+        // Log::useFiles(storage_path().'/logs/laravel.log')->info('用户注册原始数据:',$request);
+        // $log->addInfo('======订单信息123======:'.$request);
         $data = $request->input('data');
         
         $obj = $data['object'];
         // return Common::returnSuccessResult(200,'订单不存在',$data);
+        //order_no
 
-    	$orders = Orders::where('id',$request->input('id'))->first();
+    	$orders = Orders::where('ordernum',$obj['order_no'])->first();
+        
         if($orders)
         {
-            if((float)$obj->amount == (float)$orders->num*100){
+            $log->addInfo('======订单信息123ggggggg======:'.$orders);
+           // if((float)$obj['amount'] >= (float)$orders->num*100){
                 $orders->status = 0;
-                if($json->type == 'charge.succeeded'){
+                if($request->input('type') == 'charge.succeeded'){
                     $orders->status = 1;
+                    $m = ActivityMember::where('activities_id',$orders->activities_id)->where('users_id',$orders->user_id)->first();
+                    if($m){
+                        $m->is_pay = 1;
+                        $m->pay_path = 1;
+                        $m->save();
+                        $log->addInfo('======成员信息======:'.$m);
+                    }
                 }
+                $log->addInfo('======订单信息======:'.$orders);
                 $orders->save();
                 return Common::returnSuccessResult(200,'success',"");
-            }else{
-                return Common::returnSuccessResult(200,'支付金额不一致',"");
-            }
+            // }else{
+            //     return Common::returnSuccessResult(203,'支付金额不一致',"");
+            // }
         }else{
-            return Common::returnSuccessResult(200,'订单不存在',"");
+            return Common::returnSuccessResult(204,'订单不存在',"");
         }
         
     	// $orders

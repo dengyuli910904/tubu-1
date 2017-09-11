@@ -10,6 +10,8 @@ use App\Libraries\Common;
 use UUID;
 use Dingo\Api\Routing\Helpers;
 use App\Models\GroupsApply;
+use App\Models\News;
+use App\Models\Activities;
 
 class GroupsController extends Controller
 {
@@ -97,6 +99,27 @@ class GroupsController extends Controller
     	if($request->has('id')){
     		$groups = Groups::find($request->input('id'));
     		if($groups){
+
+                $groups->user_role = 3;//,'role_text'=>'未申请'];
+                if($request->has('users_id')){
+                    if( $groups->users_id == $request->input('users_id')){
+                        $groups->user_role = 10;
+                        // $user->role_text = '圈主';
+                    }else{
+                        $member = GroupMember::where('users_id',$request->input('users_id'))->where('groups_id',$request->input('id'))->first();
+                        if($member){
+                            $groups->user_role = $member->role; //副圈主
+                            // $user->role_text = $member->role == 0?'已加入':'副圈主';
+                        }else{
+                            $app = GroupsApply::where('users_id',$request->input('users_id'))->where('groups_id',$request->input('id'))->first();
+                            if($app){
+                                $groups->user_role = 2; 
+                                // $user->role_text = '申请审核中';
+                            }
+                        }
+                    }
+                }
+
     			$data['groupsinfo'] = $groups;
     			$owner = Users::find($groups->users_id);
     			if(!empty($owner)){
@@ -107,6 +130,9 @@ class GroupsController extends Controller
     			// $data['member'] = array('users_id'=>$groups->users_id,);
                 $deputyid = "";
                 $memberid = "";
+                $deputys = [];
+                $members = [];
+                $user = [];
     			//参与的用户
     			$idlist = GroupMember::where('groups_id','=',$request->input('id'))->select('users_id','role')->get();
     			foreach ($idlist as $key => $value) {
@@ -120,8 +146,7 @@ class GroupsController extends Controller
     						break;
     				}
     			}
-                $deputys = [];
-                $members = [];
+                
                 // return $deputyid
                 if(!empty($deputyid)){
                     $deputys = Users::query('where id in ('.$deputyid.')')->get();
@@ -182,6 +207,7 @@ class GroupsController extends Controller
             $groups->intro = $request->input('intro');
             $groups->address = $request->input('address');
             $groups->cover = $request->input('cover');
+            $groups->users_id = $request->input('users_id');
             if($groups->save()){
                 return Common::returnSuccessResult(200,'创建成功',$groups);
             }else{
@@ -224,6 +250,33 @@ class GroupsController extends Controller
         }else{
             return Common::returnResult(204,'该记录不存在','');
         }
+    }
+
+    /**
+     * 分享的圈子详情页面
+     */
+    public function info(Request $request){
+        if(!$request->has('id'))
+            return view('error');
+
+        $group = Groups::find($request->input('id'));
+        if(!$group)
+            return view('error');
+
+        $members = GroupMember::join('users','users.id','=','groupmember.users_id')
+        ->where('groups_id',$request->input('id'))
+        ->select('users.*')
+        ->get();
+
+        $act = Activities::where('groups_id',$request->input('id'))
+        ->take(10)
+        ->get();
+        $data['groups'] = $group;
+        $data['members'] = $members;
+        $data['activity'] = $act;
+        // return $data;
+        $data['owner'] = Users::find($group->users_id);
+        return view('web.share.group',['data'=>$data]);
     }
     
     /**

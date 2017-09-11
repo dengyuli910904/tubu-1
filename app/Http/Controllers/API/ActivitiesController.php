@@ -30,6 +30,9 @@ class ActivitiesController extends Controller
             ->where('status','<>','0')
             ->where(function($query) use($request){
                 //searchtxt
+                if($request->has('searchtxt')){
+                    $query->where('title','like','%'.$request->input('searchtxt').'%');
+                }
             })
             ->select('id','cover','title','starttime','endtime',
     				 'enrol_starttime','enrol_endtime','cost','limit_count','participation_count',
@@ -84,6 +87,8 @@ class ActivitiesController extends Controller
     public function show(Request $request){
     	$activity = Activities::find($request->input('id'));
     	if(!empty($activity)){
+            // $activity->content = htmlspecialchars($activity->content);
+            // $activity->text = $activity->content;
             $groups = Groups::find($activity->groups_id);
             $activity->status_text = '待发布'; //结束活动
             if($groups){
@@ -148,7 +153,7 @@ class ActivitiesController extends Controller
                 $member = ActivityMember::where('users_id',$request->input('users_id'))->where('activities_id',$request->input('id'))->first();
                 $data['is_sign_in'] = false;
                 $data['is_pay'] = false;
-                if((float)$activity->cost <=0){
+                if((float)$activity->cost <= 0){
                     $data['is_pay'] = true;
                 }
                 if($member){
@@ -180,6 +185,10 @@ class ActivitiesController extends Controller
     *   添加活动——part1
     */
     public function store_part1(Request $request){
+        $group = Groups::find($request->input('groups_id'));
+        if(!$group)
+            return Common::returnResult('204','该俱乐部记录不存在',"");
+
         if($request->has('id')){
             $id = $request->input('id');
             $activity = Activities::find($request->input('id'));
@@ -250,10 +259,17 @@ class ActivitiesController extends Controller
         if(!$activity){
             return Common::returnResult('400','记录不存在',"");
         }
+        $group = Groups::find($activity->groups_id);
+        if(!$group)
+            return Common::returnResult('204','该俱乐部记录不存在',"");
+
         $activity->cost = $request->input('cost');
         $activity->cost_intro = $request->input('cost_intro');
         $activity->status = 1;
         if($activity->save()){
+            $group->activities_count = (int)$group->activities_count+1;
+            $group->save();
+            
             return Common::returnResult('200','保存成功',array('id'=>$activity->id));
         }else{
             return Common::returnResult('400','保存失败',"");
@@ -292,5 +308,34 @@ class ActivitiesController extends Controller
         }else{
             return Common::returnResult('204','无任何更新',"");
         }
+    }
+    /**
+     * 分享也面
+     */
+    public function info(Request $request){
+        // return view('web.share.activity');
+        if(!$request->has('id'))
+            return view('error');
+
+        $activity = Activities::find($request->input('id'));
+        if(!$activity)
+            return view('error');
+
+        $group = Groups::find($activity->groups_id);
+        if(!$group)
+            return view('error');
+
+
+        $members = ActivityMember::join('users','users.id','=','activitymembers.users_id')
+        ->where('activities_id',$request->input('id'))
+        ->select('users.*')
+        ->get();
+
+        $data['activity'] = $activity;
+        $data['members'] = $members;
+        $data['group'] = $group;
+        // return $data;
+        $data['owner'] = Users::find($activity->users_id);
+        return view('web.share.activity',['data'=>$data]);
     }
 }

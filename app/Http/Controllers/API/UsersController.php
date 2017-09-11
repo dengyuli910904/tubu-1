@@ -18,25 +18,85 @@ use App\Models\GroupsApply;
 use App\Models\Groups;
 use App\Models\News;
 use App\Models\Verifycode;
-use DB;
+// use DB;
 use UUID;
 
 class UsersController extends Controller
 {
 
     /**
+     * 修改密码
+     */
+    public function alter_pwd(Request $request){
+        $valid = Verifycode::valid($request->input('code'),$request->input('code_id'),$request->input('phone'),1); // 
+        switch ($valid) {
+            case -1:
+                return Common::returnResult("201",'验证码错误',''); 
+                break;
+            
+            case -2:
+                return Common::returnResult("201",'验证码超时，请重新发送',''); 
+                break;
+        }
+        $user = Users::where('telphone',$request->input('phone'))->first();
+        if(!$user){
+            return Common::returnErrorResult('400', "您的手机号码未注册");
+        }
+        if($user->pwd == md5($request->input('pwd').$user->solt)){
+            return Common::returnErrorResult('203', "不能与原密码相同");
+        }
+        // if(empty($user->telphone)){
+        //     $user->telphone = $request->input('phone');
+        // }
+        // if($user->telphone != $request->input('phone')){
+        //     return Common::returnErrorResult('203', "该手机号不是您绑定的手机号");
+        // }
+        $solt = (string)UUID::generate();
+        $user->solt = $solt;
+        $user->pwd = md5($request->input('pwd').$solt);
+        if($user->save()){
+            $user->is_bind_tel = true;
+            return Common::returnResult('200', "设置成功", $user);
+        } else {
+            return Common::returnErrorResult('400', "设置失败");
+        }
+    }
+
+
+    /**
      * 修改用户信息-电话
      */
     public function alter_tel(Request $request){
+        $user = Users::where('telphone',$request->input('phone'))->first();
+        if($user)
+        {
+            return Common::returnResult("201",'该手机号已注册','');
+        }
+
+        $valid = Verifycode::valid($request->input('code'),$request->input('code_id'),$request->input('phone'),2); // 
+        switch ($valid) {
+            case -1:
+                return Common::returnResult("201",'验证码错误',''); 
+                break;
+            
+            case -2:
+                return Common::returnResult("201",'验证码超时，请重新发送',''); 
+                break;
+        }
+        // if($valid){
+        // $valid = Verifycode::where('id',$request->input('code_id'))->where('code',$request->input('code'))->where('is_valid','0')->first();
+        // $valid->is_valid = 1;
+        // $valid->save();
         $user = Users::find($request->input('users_id'));
         if(!$user){
             return Common::returnErrorResult('400', "用户记录不存在");
         }
-        if($user->telphone == $request->input('phone')){
-            return Common::returnErrorResult('203', "没有信息进行修改");
-        }
+        // if($user->telphone == $request->input('phone')){
+        //     return Common::returnErrorResult('203', "没有信息进行修改");
+        // }
         $user->telphone = $request->input('phone');
         if($user->save()){
+            $user->is_bind_tel = true;
              return Common::returnResult('200', "设置成功", $user);
         } else {
             return Common::returnErrorResult('400', "设置失败");
@@ -129,9 +189,13 @@ class UsersController extends Controller
             return Common::returnErrorResult("400", "缺少参数");
         }
         $user = Users::where('telphone', $phone)->first();
+        if(!$user){
+            return Common::returnErrorResult('400', "用户名或密码错误");
+        }
         $pwd = md5($passwd.$user->solt);
-       
+
         if ($user->pwd == $pwd) {
+            $user->is_bind_tel = true;
             return Common::returnResult('200', "登录成功", $user);
         } else {
             return Common::returnErrorResult('400', "用户名或密码错误");
@@ -156,6 +220,7 @@ class UsersController extends Controller
             $user->name = $request->input('name');
             $user->headimg = $request->input('headimg');
             $user->sex = $request->input('sex');
+            $user->wx_openid = $request->input('openid');
             if($user->save()){
                 $user->id = (string)$id;
                 $user->is_bind_tel = false;
@@ -180,6 +245,7 @@ class UsersController extends Controller
             $user->name = $request->input('name');
             $user->headimg = $request->input('headimg');
             $user->sex = $request->input('sex');
+            $user->sina_openid = $request->input('openid');
             if($user->save()){
                 $user->id = (string)$id;
                 $user->is_bind_tel = false;
@@ -204,6 +270,7 @@ class UsersController extends Controller
             $user->name = $request->input('name');
             $user->headimg = $request->input('headimg');
             $user->sex = $request->input('sex');
+            $user->qq_openid = $request->input('openid');
             if($user->save()){
                 $user->id = (string)$id;
                 $user->is_bind_tel = false;
@@ -218,7 +285,7 @@ class UsersController extends Controller
      */
     public function register(Request $request){
         // $v = New Verifycode();
-        $valid = Verifycode::valid($request->input('code'),$request->input('code_id'),$request->input('phone')); // 
+        $valid = Verifycode::valid($request->input('code'),$request->input('code_id'),$request->input('phone'),3); // 
         switch ($valid) {
             case -1:
                 return Common::returnResult("201",'验证码错误',''); 
@@ -229,9 +296,9 @@ class UsersController extends Controller
                 break;
         }
         // if($valid){
-            $valid = Verifycode::where('id',$request->input('code_id'))->where('code',$request->input('code'))->where('is_valid','0')->first();
-            $valid->is_valid = 1;
-            $valid->save();
+            // $valid = Verifycode::where('id',$request->input('code_id'))->where('code',$request->input('code'))->where('is_valid','0')->first();
+            // $valid->is_valid = 1;
+            // $valid->save();
             $user = Users::where('telphone',$request->input('phone'))->first();
             if(!$user){
                 $solt = UUID::generate();
@@ -243,6 +310,7 @@ class UsersController extends Controller
                 $user->headimg = 'http://lstubu-img-app.oss-cn-shenzhen.aliyuncs.com/timg.jpg';
                 if($user->save()){
                     $user = Users::where('telphone', $request->input('phone'))->where('pwd',$user->pwd)->first();
+                    $user->is_bind_tel = true;
                     return Common::returnResult('200', "注册成功",$user);
                 }else{
                     return Common::returnResult('400', "注册失败",'');
@@ -365,9 +433,27 @@ class UsersController extends Controller
 
         $list = ActivitiesCollect::join('activities as a','a.id','=','activities_collect.activities_id')
         ->where('activities_collect.user_id',$request->input('users_id'))
+        ->select('a.id','a.title','a.starttime','a.endtime','a.cover','a.cost',
+                'a.participation_count','a.keywords','a.status')
         ->skip($pagesize*$pageindex)
         ->take($pagesize)
         ->get();
+        foreach ($list as $val) {
+             switch ($val->status) {
+                case 1:
+                    $val->status_text = '报名中'; //正式发布状态
+                    break;
+                case 2:
+                    $val->status_text = '报名结束'; //结束报名状态
+                    break;
+                case 3:
+                    $val->status_text = '活动已取消'; //取消活动
+                    break;
+                case 4:
+                    $val->status_text = '活动已结束'; //结束活动
+                    break;
+            }
+        }
         return Common::returnSuccessResult('200', '获取成功', $list);
     }
 
@@ -383,11 +469,29 @@ class UsersController extends Controller
         if($request->has('pagesize'))
             $pagesize = $request->input('pagesize');
 
-        $list = ActivityMember::join('activities', 'activities.id','=','activitymembers.users_id')
+        $list = ActivityMember::join('activities', 'activities.id','=','activitymembers.activities_id')
             ->where('activitymembers.users_id', $request->input('users_id'))
+            ->select('activities.id','activities.title','activities.starttime','activities.endtime','activities.cover','activities.cost',
+                'activities.participation_count','activities.keywords','activities.status')
             ->skip($pagesize*$pageindex)
             ->take($pagesize)
             ->get();
+        foreach ($list as $val) {
+                 switch ($val->status) {
+                    case 1:
+                        $val->status_text = '报名中'; //正式发布状态
+                        break;
+                    case 2:
+                        $val->status_text = '报名结束'; //结束报名状态
+                        break;
+                    case 3:
+                        $val->status_text = '活动已取消'; //取消活动
+                        break;
+                    case 4:
+                        $val->status_text = '活动已结束'; //结束活动
+                        break;
+                }
+            }
         return Common::returnSuccessResult('200', '', $list);
     }
 
@@ -403,11 +507,18 @@ class UsersController extends Controller
         if($request->has('pagesize'))
             $pagesize = $request->input('pagesize');
 
-        $list = GroupMember::join('groups', 'groups.id','=','groupmember.users_id')
-            ->where('groupmember.users_id', $request->input('users_id'))
+        $list = //Groups::join('groupmember','groups.id','=','groupmember.groups_id')
+         GroupMember::join('groups', 'groups.id','=','groupmember.groups_id')
+            ->where(function($query) use ($request){
+                $query->where('groupmember.users_id', $request->input('users_id'))
+                ->orWhere('groups.users_id',$request->input('users_id'));
+            })
             ->skip($pageindex*$pagesize)
             ->take($pagesize)
             ->get();
+        foreach ($list as $val) {
+            $val->is_member = 1;//先默认非成员
+        }
         return Common::returnSuccessResult('200', '', $list);
     }
 

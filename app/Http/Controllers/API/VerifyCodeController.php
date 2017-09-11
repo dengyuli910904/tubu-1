@@ -9,6 +9,7 @@ use PhpSms;
 use App\Libraries\Common;
 use App\Models\Verifycode;
 use UUID;
+use App\Models\Users;
 
 class VerifyCodeController extends Controller
 {
@@ -16,7 +17,18 @@ class VerifyCodeController extends Controller
      * 发送验证码
      */
     public function sendcode(Request $request){
-    	$to = $request->input('phone');
+        $type = 0;
+        $to = $request->input('phone');
+        if($request->has('type'))
+            $type = $request->input('type');
+
+        $user = Users::where('telphone',$to)->first();
+        if(!$user && $type == 1)
+            return Common::returnErrorResult(204,"该手机号未注册",""); 
+        else if($user && $type != 1)
+            return Common::returnErrorResult(204,"该手机号已被注册",""); 
+
+    	
         $code = rand(1000,9999);
         // 短信模版
         $templates = [
@@ -37,6 +49,7 @@ class VerifyCodeController extends Controller
         	$vcode->phone = $to;
         	$vcode->code = $code;
         	$vcode->comment = '';
+            $vcode->type = $type;
         	$vcode->save();
         	return Common::returnSuccessResult(200,'发送成功',['id'=>(string)$id]);
         }else{

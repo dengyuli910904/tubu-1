@@ -158,7 +158,7 @@ $api->version('v1',function($api){
 		//我的通知消息
 		$api->get('/systemmsg','UsersController@systemmsg');
 
-		//修改用户信息-电话
+		//修改用户信息-电话 code,code_id,phone
 		$api->put('/tel','UsersController@alter_tel');
 		//修改用户信息-头像
 		$api->put('/headimg','UsersController@alter_img');
@@ -168,6 +168,10 @@ $api->version('v1',function($api){
 		$api->put('/birth','UsersController@alter_birth');
 		//修改用户信息-昵称
 		$api->put('/name','UsersController@alter_name');
+
+		//设置密码
+		$api->put('/pwd','UsersController@alter_pwd');
+
 
 		//第三方登陆
 		$api->post('/login_wx','UsersController@third_party_wx_login');
@@ -182,5 +186,11 @@ $api->version('v1',function($api){
 		$api->post('/payinfo','OrdersController@store');
 		$api->post('/paystatus','OrdersController@update');
 		$api->post('/getcharge','OrdersController@getcharge');
+	});
+
+	//反馈
+	$api->group(['namespace'=>'App\Http\Controllers\API','prefix'=>'system'],function($api){
+		$api->post('/feedback','FeedbackController@store');
+		$api->get('/about','FeedbackController@show');
 	});
 });

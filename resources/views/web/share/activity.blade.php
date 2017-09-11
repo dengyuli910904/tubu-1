@@ -42,23 +42,23 @@
     <div>
         <section>
         	<div class="row">
-            	<img src="{{ asset('web/img/img.png')}}" class="img-responsive" />
+            	<img src="{{ $data['activity']['cover']}}"  style="max-height:400px; width:100%; " />
             </div>
 
             <div class="row">
-            	<div class="col-xs-8">
-            		<h3>深圳湾徒步旅行团</h3>
+            	<div class="col-xs-12">
+            		<h3>{{ $data['activity']['title'] }}</h3>
             	</div>
-            	<div class="col-xs-4">
+            	<!-- <div class="col-xs-4">
             		<button class="btn-follow">关注</button>
-            	</div>
+            	</div> -->
             	
             </div>
             <div class="row">
             	<div class="col-xs-6">
             		<span class="label label-warning">即将开始</span>
-            		<span class="label label-danger">徒步</span>
-            		<span>￥98</span>
+            		<span class="label label-danger">{{ $data['activity']['keywords'] }}</span>
+            		<span>￥{{ $data['activity']['cost'] }}</span>
             	</div>
             	<!-- <div class="col-xs-6">
             		<span class="glyphicon glyphicon-eye-open" aria-hidden="true">关注：62</span>
@@ -71,11 +71,11 @@
             <div class="row">
             	<div class="col-xs-6">
             		<p>开始时间：</p>
-            		<p>2017-07-02 08：00</p>
+            		<p>{{ $data['activity']['starttime'] }}</p>
             	</div>
             	<div class="col-xs-6">
             		<p>结束时间：</p>
-            		<p>2017-07-02 08：00</p>
+            		<p>{{ $data['activity']['endtime'] }}</p>
             	</div>
             </div>
         </section>
@@ -86,36 +86,32 @@
 	        		<h4>所属圈子</h4>
             	</div>	
             	<div class="col-xs-8" style="text-align:right;">
-            		<h4 class="act_title">徒步深圳湾旅团</h4>
+            		<h4 class="act_title">{{ $data['group']['name'] }}</h4>
             	</div>
         	</div>
         	<hr/>
         	<div class="row">
         		<div class="col-xs-4">
 	        		<img src="{{ asset('web/img/user.png') }}" class="img-circle user-img">
-	        		<label>Peter</label>
+	        		<label>{{ $data['activity']['contacts'] }}</label>
             	</div>	
             	<div class="col-xs-8" style="line-height:50px; text-align:right;">
-            		12033333333
+            		{{ $data['activity']['contacts_tel'] }}
             	</div>
         	</div>
         	<hr/>
         	<div class="row">
         		<div class="col-xs-2 leader">
-        			<img src="{{ asset('web/img/user.png')}}" class="img-circle user-img">
-        		</div>
-        		<div class="col-xs-2">
-        			<img src="{{ asset('web/img/user.png')}}" class="img-circle user-img">
-        		</div>
-        		<div class="col-xs-2">
-        			<img src="{{ asset('web/img/user.png')}}" class="img-circle user-img">
-        		</div>
-        		<div class="col-xs-2 add">
-        			<img src="{{ asset('web/img/user.png')}}" class="img-circle user-img">
-        		</div>
-        		<div class="col-xs-4" style="line-height:50px;">
+                    <img src="{{ $data['owner']['headimg']}}" class="img-circle user-img">
+                </div>
+                @foreach($data['members'] as $m)
+                <div class="col-xs-2">
+                    <img src="{{ $m->headimg }}" class="img-circle user-img">
+                </div>
+                @endforeach
+        		<!-- <div class="col-xs-4" style="line-height:50px;">
         			120/200人
-        		</div>
+        		</div> -->
         		<!-- <div class="col-xs-1">
         			<span class="glyphicon glyphicon-menu-right" aria-hidden="true"  style="line-height:50px;"></span>
         		</div> -->
@@ -129,7 +125,8 @@
         	</div>
         	<div class="row">
         		<div class="col-xs-12">
-        			活动内容活动内容活动内容活动内容活动内容活动内容活动内容活动内容活动内容活动内容
+        			{!! $data['activity']['content'] !!}
+                    
         		</div>
         	</div>
         </section>
@@ -140,7 +137,7 @@
         	</div>
         	<div class="row">
         		<div class="col-xs-12">
-        			活动费用活动费用活动费用活动费用活动费用活动费用活动费用活动费用活动费用活动费用
+        			{{ $data['activity']['cost_intro'] }}
         		</div>
         	</div>
         </section>

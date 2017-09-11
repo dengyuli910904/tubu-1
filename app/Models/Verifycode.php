@@ -16,17 +16,21 @@ class Verifycode extends Model
 	/**
 	 * 验证
 	 */
-	public function valid($code,$id,$phone){
+	public static function valid($code,$id,$phone,$type){
 		//Verifycode
-		$valid = DB::table($table)
+		$valid = DB::table('verifycode')
 		->where('id',$id)->where('code',$code)
 		->where('phone',$phone)
 		->where('is_valid','0')
+		->where('type',$type)
 		->first();
 		if(!$valid){
 			return -1; //验证码错误
 		}
+		// $valid->is_valid = 1;
+		// $valid->save();
 
+		$v = DB::table('verifycode')->where('id',$valid->id)->update(['is_valid'=>1]);
 		//判断当前时间与之前的时间
 		$startdate= $valid->created_at;
 		$enddate= time();
@@ -37,5 +41,7 @@ class Verifycode extends Model
 		if($minute >30){
 			return -2; //超时
 		}
+		return 1;
+
 	}
 }

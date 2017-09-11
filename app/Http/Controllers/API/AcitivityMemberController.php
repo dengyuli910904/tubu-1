@@ -9,6 +9,7 @@ use App\Models\GroupMember;
 use App\Models\Activities;
 use App\Libraries\Common;
 use App\Models\Users;
+use App\Models\News;
 use UUID;
 
 class AcitivityMemberController extends Controller
@@ -112,10 +113,15 @@ class AcitivityMemberController extends Controller
         $member->users_id = $request->input('users_id');
         $member->comment = $request->input('comment');
         if($member->save()){
+            $act->apply_count = (int)$act->apply_count +1;
+            
             $need_pay = false;
             if($act->cost >0){
                 $need_pay = true;
+            }else{
+                $act->apply_count = (int)$act->participation_count +1;
             }
+            $act->save();
             return Common::returnResult('200','参与成功',['need_pay'=>$need_pay,'num'=>$act->cost]);
         }else{
             return Common::returnResult('400','参与失败',"");
@@ -161,6 +167,8 @@ class AcitivityMemberController extends Controller
         $member->is_pay = 1;//
         $member->pay_path = 2;//$request->input('pay_path');//1正常支付，2管理员操作，3其他
         if($member->save()){
+            
+            News::send_act_msg($request->input('users_id'),$request->input('activities_id'),'您的付费状态已经被修改为：已付费');
             return Common::returnResult('200','修改成功',"");
         }else{
             return Common::returnResult('400','修改失败',"");
@@ -202,6 +210,7 @@ class AcitivityMemberController extends Controller
             $member->users_id = $request->intpu('users_id');
             $member->comment = $request->input('comment');
             if($member->save()){
+                News::send_act_msg($request->input('u_id'),$request->input('activities_id'),'您的身份被设置为 '.$activity->title.' 的副领队');
                 return Common::returnResult('200','设置成功',"");
             }else{
                 return Common::returnResult('400','设置失败',"");

@@ -113,33 +113,37 @@ class ActivitiesController extends Controller
                 $data['activityinfo'] = $activity;
                 $data['groupsinfo'] = array('name'=>$groups->name,'score'=>$groups->score);
 
-                $owner = Users::find($groups->users_id);
+                $owner = Users::select('id','name','headimg','birthdate','sex','telphone')->find($groups->users_id);
                 if(!$owner){
                     $owner = [];
                 }
                 $data['leaderinfo'] = $owner;
                 $idlist = ActivityMember::where('activities_id','=',$request->input('id'))->select('users_id','role')->get();
-                $deputyid = "";
-                $memberid = "";
+                $deputyid = [];
+                $memberid = [];
                 foreach ($idlist as $key => $value) {
                     switch ($value->role) {
                         case 0:
-                            $memberid = $memberid.$value->id.',';//($key === (count($idlist)-1)?'':',');
+                            array_push($memberid, $value->users_id);
+                            // $memberid = $memberid.$value->users_id.',';//($key === (count($idlist)-1)?'':',');
                             break;
                         
                         case 1:
-                            $deputyid = $deputyid.$value->id.',';//($key === (count($idlist)-1)?'':',');
+                            array_push($deputyid, $value->users_id);
+                            // $deputyid = $deputyid.$value->users_id.',';//($key === (count($idlist)-1)?'':',');
                             break;
                     }
                 }
                 $deputys = [];
                 $members = [];
                 if(!empty($deputyid)){
-                    $deputys = Users::query('where id in ('.$deputyid.')')->get();
+                    $deputys = Users::whereIn('id',$deputyid)->select('id','name','headimg','birthdate','sex','telphone')->get();
                 } 
                 $data['deputys'] = $deputys;//副领队列表
+
                 if(!empty($memberid)){
-                    $members = Users::query('where id in ('.$memberid.')')->take(4)->get();
+                    $members = Users::whereIn('id',$memberid)->select('id','name','headimg','birthdate','sex','telphone')->get();
+                    // $members = Users::query('where11 id——0 in ('.$memberid.')')->select('id','name','headimg','birthdate','sex','telphone')->get();
                 }
                 
                 $data['members'] = $members;//普通成员列表

@@ -193,4 +193,10 @@ $api->version('v1',function($api){
 		$api->post('/feedback','FeedbackController@store');
 		$api->get('/about','FeedbackController@show');
 	});
+
+	//计步
+	$api->group(['namespace'=>'App\Http\Controllers\API','prefix'=>'step'],function($api){
+		$api->post('/start','StepCountingController@store');
+		$api->put('/over','StepCountingController@update');
+	});
 });

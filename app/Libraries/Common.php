@@ -141,4 +141,26 @@ class Common
         return timestamp();
     }
 
+    public static function birthday($birthday){ 
+         $age = strtotime($birthday); 
+         if($age === false){ 
+                $arr = explode('.',$birthday);
+                // return $arr;
+                if($arr){
+                    $y1 = $arr[0];
+                }else{
+                    $y1 = '1900';
+                }
+         } 
+         else{
+            list($y1,$m1,$d1) = explode("-",date("Y-m-d",$age)); 
+         }
+        $now = strtotime("now"); 
+         list($y2,$m2,$d2) = explode("-",date("Y-m-d",$now));
+         $age = $y2 - $y1; 
+         // if((int)($m2.$d2) < (int)($m1.$d1)) 
+         //  $age -= 1; 
+         return $age; 
+    }
+
 }

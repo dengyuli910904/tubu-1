@@ -34,3 +34,4 @@ Route::get('/login',function(){
 });
 
 Route::resource('/mgroup','GroupsController');
+Route::resource('/mactivity','ActivitiesController');

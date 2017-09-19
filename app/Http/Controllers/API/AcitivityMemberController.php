@@ -21,6 +21,9 @@ class AcitivityMemberController extends Controller
      */
     public function index(Request $request)
     {
+        $act = Activities::find($request->input('activities_id'));
+        if(!$act)
+            return Common::returnResult('400','该活动不存在','');
         $pageindex = 0;
         $pagesize = 5;
         if($request->has('pageindex'))
@@ -32,14 +35,28 @@ class AcitivityMemberController extends Controller
         ->where('activitymembers.activities_id','=',$request->input('activities_id'))
         ->where(function($query) use ($request){
             // ，searchtxt
+            if($request->has('searchtxt')){
+                $query->where('u.name','like','%'.$request->input('searchtxt').'%')
+                ->orwhere('u.telphone','like','%'.$request->input('searchtxt').'%');
+            }
         })
         ->skip($pagesize*$pageindex)
         ->take($pagesize)
         ->orderby('role','desc')
-        ->select('activitymembers.role','u.*')
+        ->select('activitymembers.role','u.name','u.telphone','u.headimg','u.sex','u.birthdate')
         ->get();
+        // $owner = Users::select('name','telphone','headimg','sex','birthdate')->find($act->users_id);
+        // return $owner;
+        // if($owner){
+        //     $owner->role = 2; //领队，活动创建人
+        //     // array_push(array, var)
+        //     // return $owner;
+        //     // array_merge($list, $owner);
+        //     // return $list;
+        // }
         foreach ($list as $val) {
-            $val->age = 18;
+            // echo $val->birthdate;
+            $val->age = Common::birthday($val->birthdate);
         }
         // $memberid = '';
         // $deputyid = '';

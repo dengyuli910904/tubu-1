@@ -72,14 +72,14 @@ class ActivitiesController extends Controller
      * 添加活动
      */
     public function create(Request $request){
-    	$user_id = '1';
+    	$user_id = '123456';
     	$groups = GroupMember::where('groupmember.users_id',$user_id)
     		->where('groupmember.role','1')
     		->where('groupmember.status','1')
     		->join('groups as g','g.id','=','groupmember.groups_id')
     		->select('g.name','g.id')
     		->get();
-    	return view('web.activity.act_publish',array('groups' =>$groups));
+    	return view('web.activity.act_publish',['groups' =>$groups]);
     }
 
     /**
@@ -122,4 +122,8 @@ class ActivitiesController extends Controller
     		return Redirect::back()->withInput()->withErrors('已有该活动记录');
     	}
     }
+
+    // public function publish(Request $request){
+
+    // }
 }

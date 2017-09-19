@@ -414,6 +414,7 @@ class UsersController extends Controller
 
         $list = GroupsFollow::join('activities as a','a.id','=','activities_follow.activities_id')
         ->where('user_id',$request->input('users_id'))
+        // ->select
         ->skip($pagesize*$pageindex)
         ->take($pagesize)
         ->get();
@@ -507,12 +508,20 @@ class UsersController extends Controller
         if($request->has('pagesize'))
             $pagesize = $request->input('pagesize');
 
-        $list = //Groups::join('groupmember','groups.id','=','groupmember.groups_id')
-         GroupMember::join('groups', 'groups.id','=','groupmember.groups_id')
+        $list = Groups::join('users',function($join){
+                $join->on('groups.users_id','=','users.id');
+            })
+            ->join('groupmember',function($join){
+                $join->on('groups.id','=','groupmember.groups_id')
+                     ->on('groupmember.users_id','=','users.id');
+            })
+         // GroupMember::join('groups', 'groups.id','=','groupmember.groups_id')
             ->where(function($query) use ($request){
                 $query->where('groupmember.users_id', $request->input('users_id'))
                 ->orWhere('groups.users_id',$request->input('users_id'));
             })
+            ->select('groups.*')
+            // ->having('groups.id')
             ->skip($pageindex*$pagesize)
             ->take($pagesize)
             ->get();

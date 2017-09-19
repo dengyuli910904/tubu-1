@@ -38,7 +38,7 @@ Route::group(['prefix'=>'web','namespace'=>'Admin'],function(){
 		Route::resource('groups','GroupsController');
 	// });
 });
-
+route::get('/act_publish','Admin\GroupsController@create');
 Route::get('/',function(){
 	return view('web.activity.act_publish');
 });

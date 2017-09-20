@@ -50,6 +50,7 @@ Route::group(['prefix'=>'share'],function(){
 	// });
 	Route::get('group','API\GroupsController@info');
 	Route::get('activity','API\ActivitiesController@info');
+	Route::get('step','API\StepCountingController@info');
 	// Route::get('group',function(){
 	// 	return view('web.share.group');
 	// });

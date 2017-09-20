@@ -162,5 +162,40 @@ class Common
          //  $age -= 1; 
          return $age; 
     }
+    /**
+      * 时间间距
+      * @param $type 1 return string 天时
+      *              2 return string 天时分
+      *              3 return string 天时分秒
+      * @author Jozh liu
+      */
+     public static function left_time($big, $small, $type=1){
+         if ( strlen($big) != 10 || !is_int($big) ) return false;
+         if ( strlen($small) != 10 || !is_int($small) ) return false;
+         if ($big < $small) return false;
+     
+         $return = $re = abs($big-$small);
+     
+         $return = '';
+         if ($d = floor($re/3600/24)) $return .= $d.'d';
+
+         if ($h = floor(($re-3600*24*$d)/3600)){
+            $return .= ($h<10?'0'.$h:$h).':';
+        }else{
+            $return .= '00:';
+        }
+         if ( $type == 2 ) {
+             $i = floor(($re-3600*24*$d-3600*$h)/60);
+             $return .= ($i<10?'0'.$i:$i).':';
+         }
+         if ( $type == 3 ) {
+             $i = floor(($re-3600*24*$d-3600*$h)/60);
+             $return .= ($i<10?'0'.$i:$i).':';
+             $s = floor($re-3600*24*$d-3600*$h-60*$i);
+             $return .= ($s<10?'0'.$s:$s).'';
+         }
+     
+         return $return;
+     }
 
 }

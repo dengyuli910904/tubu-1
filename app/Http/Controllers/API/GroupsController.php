@@ -101,16 +101,18 @@ class GroupsController extends Controller
     	if($request->has('id')){
     		$groups = Groups::find($request->input('id'));
     		if($groups){
-
+                $groups->is_edit = false;
                 $groups->user_role = 3;//,'role_text'=>'未申请'];
                 if($request->has('users_id')){
                     if( $groups->users_id == $request->input('users_id')){
                         $groups->user_role = 10;
+                        $groups->is_edit = true;
                         // $user->role_text = '圈主';
                     }else{
                         $member = GroupMember::where('users_id',$request->input('users_id'))->where('groups_id',$request->input('id'))->first();
                         if($member){
                             $groups->user_role = $member->role; //副圈主
+                            $groups->is_edit = true;
                             // $user->role_text = $member->role == 0?'已加入':'副圈主';
                         }else{
                             $app = GroupsApply::where('users_id',$request->input('users_id'))->where('groups_id',$request->input('id'))->first();
@@ -176,6 +178,7 @@ class GroupsController extends Controller
      * 编辑圈子信息
      */
     public function edit(Request $request){
+        //users_id
      if($request->has('id')){
          $gourps = Groups::find($request->input('id'));
          if(!empty($groups)){

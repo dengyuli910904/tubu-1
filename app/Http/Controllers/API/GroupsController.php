@@ -24,12 +24,29 @@ class GroupsController extends Controller
         if(!$request->has('users_id')){
             return Common::returnResult(400,'参数错误');
         }
-        $list = Groups::join('groupmember as g','g.groups_id','=','groups.id')
-            ->where('g.users_id',$request->input('users_id'))
-            ->orWhere('groups.users_id',$request->input('users_id'))
-            ->where('groups.status','=','1')
-            ->where('g.role','1')
-            ->select('groups.id','groups.name')->get();
+
+        // $list1 = Groups::where('users_id',$request->input('users_id'))->where('status','1')->select('id','name')->get();
+
+        $list = GroupMember::join('groups as g','g.id','=','groupmember.groups_id')
+            // ->where(function($query) use ($request){
+            //     $query->where('groupmember.role','>','0')
+            // })
+            ->where('groupmember.users_id',$request->input('users_id'))
+            ->where('groupmember.role','>','0')
+         // Groups::join('groupmember as g','g.groups_id','=','groups.id')
+         //    ->where(function($query) use ($request){
+         //        $query->where('groups.users_id',$request->input('users_id'))
+
+         //            ->orWhere(function($query) use ($request){
+         //                $query->where('g.users_id',$request->input('users_id'))
+         //                ->where('g.role','1');
+         //            });
+         //    })
+            ->where('g.status','=','1')
+            // ->where('g.role','1')
+            ->select('g.id','g.name')
+            ->groupby('id','name')
+            ->get();
         // if(!count($list)){
         //     return Common::returnResult(200,'获取成功',"");
         // }
@@ -103,16 +120,19 @@ class GroupsController extends Controller
     		if($groups){
                 $groups->is_edit = false;
                 $groups->user_role = 3;//,'role_text'=>'未申请'];
+
                 if($request->has('users_id')){
                     if( $groups->users_id == $request->input('users_id')){
                         $groups->user_role = 10;
                         $groups->is_edit = true;
-                        // $user->role_text = '圈主';
                     }else{
                         $member = GroupMember::where('users_id',$request->input('users_id'))->where('groups_id',$request->input('id'))->first();
                         if($member){
                             $groups->user_role = $member->role; //副圈主
-                            $groups->is_edit = true;
+                            if($member->role == 1){
+                                
+                                $groups->is_edit = true;
+                            }
                             // $user->role_text = $member->role == 0?'已加入':'副圈主';
                         }else{
                             $app = GroupsApply::where('users_id',$request->input('users_id'))->where('groups_id',$request->input('id'))->first();
@@ -123,6 +143,7 @@ class GroupsController extends Controller
                         }
                     }
                 }
+
 
     			$data['groupsinfo'] = $groups;
     			$owner = Users::select('id','name','headimg','birthdate','sex','telphone')->find($groups->users_id);
@@ -207,14 +228,23 @@ class GroupsController extends Controller
             // ->where('address',$request->input('address'))
             ->first();
         if(!$groups){
+            $id = (string)UUID::generate();
             $groups = new Groups();
-            $groups->id = UUID::generate();
+            $groups->id = $id;
             $groups->name = $request->input('name');
             $groups->intro = $request->input('intro');
             $groups->address = $request->input('address');
             $groups->cover = $request->input('cover');
             $groups->users_id = $request->input('users_id');
             if($groups->save()){
+                $member = new GroupMember();
+                $member->id = UUID::generate();
+                $member->role =10;
+                $member->groups_id = $id;
+                $member->users_id = $request->input('users_id');
+                $member->status = 1;//默认通过
+                $member->save();
+                //TODO:: 后期需要改成用事务处理方式
                 return Common::returnSuccessResult(200,'创建成功',$groups);
             }else{
                 return Common::returnErrorResult(400,'创建失败',"");
@@ -231,30 +261,64 @@ class GroupsController extends Controller
     public function members(Request $request){
         $groups = Groups::find($request->input('id'));
         if($groups){
-            $data = [];
-            $idlist = GroupMember::where('groups_id','=',$request->input('id'))->select('users_id','role')->get();
-            foreach ($idlist as $key => $value) {
-                switch ($value->role) {
-                    case 0:
-                        $memberid = $memberid.$value->id.($key === (count($idlist)-1)?'':',');
-                        break;
-                   
-                    case 1:
-                        $deputyid = $deputyid.$value->id.($key === (count($idlist)-1)?'':',');
-                        break;
+            $list = GroupMember::join('users as u','u.id','=','groupmember.users_id')
+                // ->where('groupmember.users_id',$request->input('users_id'))
+                ->where('groupmember.groups_id',$request->input('id'))
+                ->select('u.id','u.name','u.headimg','u.birthdate','u.sex','u.telphone','groupmember.role')
+                ->get();
+                foreach ($list as $val) {
+                    switch ($val->role) {
+                        case 0:
+                            $val->role_text = '普通成员'; 
+                            break;
+                        case 1:
+                            $val->role_text = '副管理员';
+                            break;
+                        case 10:
+                            $val->role_text = '管理员';
+                            break;
+                    }
                 }
-            }
-            if(!empty($deputyid)){
-                $deputys = Users::where('id','in','('.$deputyid.')')->get();
-                $data['deputys'] = $deputys;//副圈主列表
-            }
-            if(!empty($memberid)){
-                $members = Users::where('id','in','('.$memberid.')')->get();
-                $data['members'] = $members;//普通成员列表
-            }
-            return Common::returnResult(200,'获取成功',$data);
+            // $data = [];
+            // $deputyid = [];
+            // $memberid = [];
+            // $deputys = [];
+            // $members = [];
+            // $owner = Users::select('id','name','headimg','birthdate','sex','telphone')->find($groups->users_id);
+            // if(!empty($owner)){
+            //     $owner->role = '1';//1 圈主
+            //     $owner->rolename = '圈主';
+            // }
+
+            // $idlist = GroupMember::where('groups_id','=',$request->input('id'))->select('users_id','role')->get();
+            // foreach ($idlist as $key => $value) {
+            //     switch ($value->role) {
+            //         case 0:
+            //             array_push($memberid,$value->users_id);
+            //             // $memberid = $memberid.$value->users_id.',';//.($key === (count($idlist)-1)?'':',');
+            //             break;
+                    
+            //         case 1:
+            //             array_push($deputyid,$value->users_id);
+            //             // $deputyid = $deputyid.$value->users_id.',';//.($key === (count($idlist)-1)?'':',');
+            //             break;
+            //     }
+            // }
+            // if(!empty($deputyid)){
+            //     $deputys = Users::whereIn('id',$deputyid)->select('id','name','headimg','birthdate','sex','telphone')->get();
+            // }
+            
+            // if(!empty($memberid)){
+            //     $members = Users::whereIn('id',$memberid)->select('id','name','headimg','birthdate','sex','telphone')->get();
+            // }
+
+            // $data['deputys'] = $deputys;//副圈主列表
+            // $data['members'] = $members;//普通成员列表
+            // $data['owner'] = $owner;
+
+            return Common::returnResult(200,'获取成功',$list);
         }else{
-            return Common::returnResult(204,'该记录不存在','');
+            return Common::returnResult(204,'该俱乐部记录不存在','');
         }
     }
 

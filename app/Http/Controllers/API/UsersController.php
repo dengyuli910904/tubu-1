@@ -307,7 +307,7 @@ class UsersController extends Controller
                 $user->telphone = $request->input('phone');
                 $user->solt = $solt;
                 $user->pwd = md5($request->input('pwd').$solt);
-                $user->headimg = 'http://lstubu-img-app.oss-cn-shenzhen.aliyuncs.com/timg.jpg';
+                $user->headimg = env('APP_LOGO');//'http://lstubu-img-app.oss-cn-shenzhen.aliyuncs.com/timg.jpg';
                 if($user->save()){
                     $user = Users::where('telphone', $request->input('phone'))->where('pwd',$user->pwd)->first();
                     $user->is_bind_tel = true;
@@ -438,6 +438,7 @@ class UsersController extends Controller
                 'a.participation_count','a.keywords','a.status')
         ->skip($pagesize*$pageindex)
         ->take($pagesize)
+        // ->orderby('created_at','desc')
         ->get();
         foreach ($list as $val) {
              switch ($val->status) {
@@ -508,23 +509,40 @@ class UsersController extends Controller
         if($request->has('pagesize'))
             $pagesize = $request->input('pagesize');
 
-        $list = Groups::join('users',function($join){
-                $join->on('groups.users_id','=','users.id');
-            })
-            ->join('groupmember',function($join){
-                $join->on('groups.id','=','groupmember.groups_id')
-                     ->on('groupmember.users_id','=','users.id');
-            })
-         // GroupMember::join('groups', 'groups.id','=','groupmember.groups_id')
+        // $circle1 = Groups::where('users_id',$request->input('users_id'))
+        $list = GroupMember::join('groups as g','g.id','=','groupmember.groups_id')
             ->where(function($query) use ($request){
-                $query->where('groupmember.users_id', $request->input('users_id'))
-                ->orWhere('groups.users_id',$request->input('users_id'));
+                $query->where('groupmember.users_id',$request->input('users_id'));
+
+                    // ->orWhere(function($query) use ($request){
+                    //     $query->where('g.users_id',$request->input('users_id'));
+                    //     // ->where('g.role','1');
+                    // });
             })
-            ->select('groups.*')
+            ->where('g.status','=','1')
+            ->select('g.*')
             // ->having('groups.id')
             ->skip($pageindex*$pagesize)
             ->take($pagesize)
+            // ->groupby('id','name')
             ->get();
+            // return 
+         // Groups::join('users',function($join){
+         //        $join->on('groups.users_id','=','users.id');
+         //    })
+         //    ->join('groupmember',function($join){
+         //        $join->on('groups.id','=','groupmember.groups_id')
+         //             ->on('groupmember.users_id','=','users.id');
+         //    })
+         //    ->where(function($query) use ($request){
+         //        $query->where('groupmember.users_id', $request->input('users_id'))
+         //        ->orWhere('groups.users_id',$request->input('users_id'));
+         //    })
+         //    ->select('groups.*')
+         //    // ->having('groups.id')
+         //    ->skip($pageindex*$pagesize)
+         //    ->take($pagesize)
+         //    ->get();
         foreach ($list as $val) {
             $val->is_member = 1;//先默认非成员
         }
@@ -578,8 +596,8 @@ class UsersController extends Controller
             //0 系统消息,1 圈子消息 2 活动消息 
             switch ($val->type) {
                 case 0:
-                    $val->cover = "http://lstubu-img-app.oss-cn-shenzhen.aliyuncs.com/QQ20170822154133.png";
-                    $val->title = "乐松";
+                    $val->cover = env('APP_LOGO');// "http://lstubu-img-app.oss-cn-shenzhen.aliyuncs.com/QQ20170822154133.png";
+                    $val->title = env('APP_NAME');
                     if(!empty($val->user_name)){
                         $val->content = $val->user_name.$val->content;
                     }

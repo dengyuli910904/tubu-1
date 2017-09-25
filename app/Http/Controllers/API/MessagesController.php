@@ -28,6 +28,7 @@ class MessagesController extends Controller
         $list = Messages::where('activites_id','=',$request->input('activities_id'))
         ->skip($pagesize*$pageindex)
         ->take($pagesize)
+        ->orderby('created_at','desc')
         ->get();
         // $data = [];
         foreach ($list as $key => $value) {

@@ -36,9 +36,10 @@ class ActivitiesController extends Controller
             })
             ->select('id','cover','title','starttime','endtime',
     				 'enrol_starttime','enrol_endtime','cost','limit_count','participation_count',
-    				 'apply_count','status','keywords')
+    				 'apply_count','status','keywords','created_at')
             ->skip($pageindex*$pagesize)
             ->take($pagesize)
+            ->orderby('created_at','desc')
     		->get();
             foreach ($list as $val) {
                  switch ($val->status) {
@@ -201,6 +202,15 @@ class ActivitiesController extends Controller
            $activity = new Activities(); 
            $id = (string)UUID::generate();
            $activity->id = $id;
+            $member = new ActivityMember();
+            $member->id = UUID::generate();
+            $member->role =10;
+            $member->activities_id = $id;
+            $member->users_id = $request->input('users_id');
+            $member->status = 1;//默认通过
+            $member->is_pay = 1;
+            $member->comment = "创建活动人员";
+            $member->save();
         }
         // return (string)$id;
         $activity->groups_id = $request->input('groups_id');

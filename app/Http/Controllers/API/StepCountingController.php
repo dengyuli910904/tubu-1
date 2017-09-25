@@ -63,6 +63,7 @@ class StepCountingController extends Controller
         ->where('users_id',$request->input('users_id'))
         ->skip($pageindex*$pageindex)
         ->take($pagesize)
+        ->orderby('end_time','desc')
         ->get();
         foreach ($list as $step) {
             $step->time = Common::left_time(strtotime($step->end_time),strtotime($step->start_time),3);
@@ -180,7 +181,6 @@ class StepCountingController extends Controller
     public function info(Request $request){
         if(!$request->has('id'))
             return view('error');
-
         $step = StepCounting::find($request->input('id'));
         if(!$step)
             return view('error');

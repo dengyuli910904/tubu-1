@@ -19,9 +19,13 @@
 //     ->namespace('Admin')
 //     ->group(base_path('routes/admin.php'));
 
+Route::get('/arrow','HomeController@index');
 Route::prefix('api')
     ->namespace('API')
     ->group(base_path('routes/api.php'));
+Route::prefix('api')
+    ->namespace('API_V2')
+    ->group(base_path('routes/api_v2.php'));
 
 
 Route::prefix('admin')
@@ -31,6 +35,13 @@ Route::prefix('admin')
 Route::get('/test',function(){
 	return view('welcome');
 });
+Route::get('/',function (){
+   return view('web.index');
+});
+
+//Route::resource('msg','Web\MessageController');
+Route::get('/msg','Web\MessageController@index');
+Route::post('/msg/store','Web\MessageController@store');
 
 Route::group(['prefix'=>'web','namespace'=>'Admin'],function(){
 	// Route::group(['prefix'=>'activity'],function(){
@@ -39,7 +50,7 @@ Route::group(['prefix'=>'web','namespace'=>'Admin'],function(){
 	// });
 });
 route::get('/act_publish','Admin\GroupsController@create');
-Route::get('/',function(){
+Route::get('/publish',function(){
 	return view('web.activity.act_publish');
 });
 

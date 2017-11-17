@@ -19,9 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 $api = app('Dingo\Api\Routing\Router');
 
-// $api->version('v1', function ($api) {
-//     $api->resource('group','App\API\GroupsController');
-// });
 
 $api->version('v1',function($api){
 	//圈子接口
@@ -202,3 +199,5 @@ $api->version('v1',function($api){
 		$api->get('/list','StepCountingController@getlist');
 	});
 });
+
+

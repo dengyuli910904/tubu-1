@@ -77,9 +77,29 @@ class ActivitiesController extends Controller
             $pagesize = $request->input('pagesize');
 
         $list = Activities::where('groups_id',$request->input('id'))->select('id','cover','title','starttime','keywords','status','apply_count')
-        ->skip($pageindex*$pagesize)
-        ->take($pagesize)
-        ->get();
+            ->where('status','<>','0')
+            ->skip($pageindex*$pagesize)
+            ->take($pagesize)
+            ->get();   
+        foreach ($list as $val) {
+             switch ($val->status) {
+                case 0:
+                    $val->status_text = '未发布'; //正式发布状态
+                    break;
+                case 1:
+                    $val->status_text = '报名中'; //正式发布状态
+                    break;
+                case 2:
+                    $val->status_text = '报名结束'; //结束报名状态
+                    break;
+                case 3:
+                    $val->status_text = '活动已取消'; //取消活动
+                    break;
+                case 4:
+                    $val->status_text = '活动已结束'; //结束活动
+                    break;
+            }
+        }
         return Common::returnResult('200','获取成功',$list);
     }
     /**
@@ -162,7 +182,8 @@ class ActivitiesController extends Controller
                     $data['is_pay'] = true;
                 }
                 if($member){
-                    if($member->is_pay == 1){
+                    //若用户已经支付或者活动付费类型为
+                    if($member->is_pay == 1 || $activity->pay_type == 3){
                         $data['is_pay'] = true;
                     }
                     $data['is_sign_in'] = true;
@@ -276,7 +297,7 @@ class ActivitiesController extends Controller
         $group = Groups::find($activity->groups_id);
         if(!$group)
             return Common::returnResult('204','该俱乐部记录不存在',"");
-
+        $activity->pay_type = $request->input('pay_type'); //活动收费类型 0 免费，1 全包 ，2 定制，3 AA
         $activity->cost = $request->input('cost');
         $activity->cost_intro = $request->input('cost_intro');
         $activity->status = 1;

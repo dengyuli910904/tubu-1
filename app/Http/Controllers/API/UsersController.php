@@ -435,10 +435,10 @@ class UsersController extends Controller
         $list = ActivitiesCollect::join('activities as a','a.id','=','activities_collect.activities_id')
         ->where('activities_collect.user_id',$request->input('users_id'))
         ->select('a.id','a.title','a.starttime','a.endtime','a.cover','a.cost',
-                'a.participation_count','a.keywords','a.status')
+                'a.participation_count','a.keywords','a.status','activities_collect.created_at')
         ->skip($pagesize*$pageindex)
         ->take($pagesize)
-        // ->orderby('created_at','desc')
+        ->orderby('created_at','desc')
         ->get();
         foreach ($list as $val) {
              switch ($val->status) {

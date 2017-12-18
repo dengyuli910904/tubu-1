@@ -64,7 +64,7 @@ class FeedbackController extends Controller
      */
     public function show()
     {
-        $about = "乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松乐松";
+        $about = "聚集世界每个角落，乐享乐松！多一次徒步，多一份快乐！";
         return Common::returnResult('200','获取成功',$about);
     }
 

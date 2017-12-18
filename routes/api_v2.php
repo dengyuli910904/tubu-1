@@ -20,6 +20,7 @@ $api->version('v1',function($api){
         $api->post('sign','ActivitiesSignController@store');
         $api->post('apply','ActivitiesRoleApplyController@store');
         $api->put('examine','ActivitiesRoleApplyController@update');
+        $api->get('role_list','ActivitiesRoleController@index');
     });
 
 });

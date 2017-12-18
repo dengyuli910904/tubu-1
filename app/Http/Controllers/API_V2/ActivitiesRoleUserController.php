@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Libraries\Common;
 use UUID;
 
-class ActivitiesRoleUserControllerController extends Controller
+class ActivitiesRoleUserController extends Controller
 {
     /**
      * Display a listing of the resource.

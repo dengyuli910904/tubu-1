@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Libraries\Common;
 
-class ActivitiesRoleControllerController extends Controller
+class ActivitiesRoleController extends Controller
 {
     /**
      * 获取活动的角色列表
@@ -87,4 +87,5 @@ class ActivitiesRoleControllerController extends Controller
     {
         //
     }
+
 }

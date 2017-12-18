@@ -12,6 +12,8 @@
 */
 // $api = app('Dingo\Api\Routing\Router');
 
+Route::prefix('lesong')
+    ->group(base_path('routes/lesong.php'));
 
 
 
@@ -60,7 +62,8 @@ Route::group(['prefix'=>'share'],function(){
 	// 	return view('web.share.activity');
 	// });
 	Route::get('group','API\GroupsController@info');
-	Route::get('activity','API\ActivitiesController@info');
+//	Route::get('activity','API\ActivitiesController@info');
+    Route::get('activity','API_V2\ActivitiesController@show');
 	Route::get('step','API\StepCountingController@info');
 	// Route::get('group',function(){
 	// 	return view('web.share.group');
@@ -85,3 +88,4 @@ Route::get('/pay','SmsController@pp');
 
 //极光推送
 Route::post('/jpush','API\NewsController@sendmsg');
+

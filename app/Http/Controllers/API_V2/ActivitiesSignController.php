@@ -9,6 +9,7 @@ use UUID;
 use App\Libraries\Common;
 use App\Models\Activities;
 use App\Models\ActivityMember;
+use App\Models\Activities_sign_rule;
 
 class ActivitiesSignController extends Controller
 {
@@ -45,6 +46,15 @@ class ActivitiesSignController extends Controller
             ->first();
         if(!$member)
             return Common::returnErrorResult(204,'该用户还没有参加活动','');
+
+         $sign_rule = Activities_sign_rule::where('activities_id',$request->input('activities_id'))
+//             ->where('users_id',$request->input('users_id'))
+             ->first();
+         if(!$sign_rule){
+             return Common::returnErrorResult(400,'该活动还未发起签到...','');
+         }else{
+             //判断是否有迟到
+         }
          $sign = new Activities_sign();
          $sign->id = UUID::generate();
          $sign->activities_id = $request->input('activities_id');

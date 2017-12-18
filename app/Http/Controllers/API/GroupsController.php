@@ -28,30 +28,13 @@ class GroupsController extends Controller
         // $list1 = Groups::where('users_id',$request->input('users_id'))->where('status','1')->select('id','name')->get();
 
         $list = GroupMember::join('groups as g','g.id','=','groupmember.groups_id')
-            // ->where(function($query) use ($request){
-            //     $query->where('groupmember.role','>','0')
-            // })
             ->where('groupmember.users_id',$request->input('users_id'))
             ->where('groupmember.role','>','0')
-         // Groups::join('groupmember as g','g.groups_id','=','groups.id')
-         //    ->where(function($query) use ($request){
-         //        $query->where('groups.users_id',$request->input('users_id'))
-
-         //            ->orWhere(function($query) use ($request){
-         //                $query->where('g.users_id',$request->input('users_id'))
-         //                ->where('g.role','1');
-         //            });
-         //    })
             ->where('g.status','=','1')
-            // ->where('g.role','1')
             ->select('g.id','g.name')
             ->groupby('id','name')
             ->get();
-        // if(!count($list)){
-        //     return Common::returnResult(200,'获取成功',"");
-        // }
         return Common::returnResult(200,'获取成功',$list);
-        // return $this->response->array($list->toArray());
     }
     /**
      * 获取所有的圈子,圈子列表（首页）

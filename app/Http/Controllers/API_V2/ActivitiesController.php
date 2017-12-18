@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Activities;
 use App\Libraries\Common;
+use Illuminate\Support\Facades\Redirect;
 
 class ActivitiesController extends Controller
 {
@@ -29,6 +30,7 @@ class ActivitiesController extends Controller
      */
     public function index(Request $request)
     {
+        $act = new Activities();
         $pageindex = 0;
         $pagesize = 5;
         if($request->has('pageindex'))
@@ -39,26 +41,40 @@ class ActivitiesController extends Controller
 
         $search_key = $request->input('search_key');//1、最新； 2、热门；3、标签；4、付费类型
         $search_value = $request->input('search_value');
-        $wheres['status'] = array('<>','0');
+
+//        $wheres['status'] = array('<>','0');
+
+        $model = $act->where(function($query) use ($request){
+            $query->where('status','<>',0);
+            if($request->has('users_id')){
+                $query->orwhere('users_id','=',$request->input('users_id'));
+            }
+        });
         if($request->has('search_txt')){
-            $wheres['title'] = array('like','%'.$request->input('search_txt').'%');
+            $model->where('title','like','%'.$request->input('search_txt').'%');
+//            $wheres['title'] = array('like','%'.$request->input('search_txt').'%');
         }
         if($request->has('situation')){
-            $wheres['address'] = $request->input('situation');
+            $model->where('address','=',$request->input('situation'));
+//            $wheres['address'] = $request->input('situation');
         }
         $orderBy = 'updated_at';
-        $act = new Activities();
+
+
+//        $act->where('id','=','11111');
         switch ($search_key){
             case '2':
                 $orderBy = 'follow_count';
                 //根据热门排序搜索
                 break;
             case '3':
-                $wheres['keywords'] = $search_value;
+//                $wheres['keywords'] = $search_value;
+                $model->where('keywords','=',$search_value);
                 //根据标签获取内容
                 break;
             case '4':
-                $wheres['pay_type'] = $search_value; //活动类型 0 免费，1 全包 ，2 定制，3 AA
+//                $wheres['pay_type'] = $search_value; //活动类型 0 免费，1 全包 ，2 定制，3 AA
+                $model->where('pay_type','=',$search_value);
                 //根据付费类型查询
                 break;
             default:
@@ -66,8 +82,10 @@ class ActivitiesController extends Controller
 
                 break;
         }
-//        return $wheres;
-        $list = $act::act_list($wheres,$orderBy,$skip,$pagesize);
+
+//        return $act->get();
+
+        $list = $act::act_list($model,$orderBy,$skip,$pagesize);
         return Common::returnResult('200','查询成功',$list);
     }
 
@@ -98,9 +116,13 @@ class ActivitiesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //
+        if($request->has('id')){
+            return view('lesong.act.detail',['data' => $request->all()]);
+        }else{
+            return Redirect::back();//传参错误
+        }
     }
 
     /**

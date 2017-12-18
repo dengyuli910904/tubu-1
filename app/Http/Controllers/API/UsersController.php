@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Libraries\Common;
 use App\Models\Activities;
+use App\Models\Activities_role_apply;
 use App\Models\ActivityMember;
 use App\Models\Evaluations;
 use App\Models\GroupMember;
@@ -628,6 +629,54 @@ class UsersController extends Controller
         return Common::returnSuccessResult('200', '获取成功', $list);
     }
 
+    /**
+     * @param Request $request
+     * 活动角色申请消息
+     */
+    public function rolemsg(Request $request){
+        $pageindex = 0;
+        $pagesize = 5;
+        if($request->has('pageindex'))
+            $pageindex = $request->input('pageindex');
+        if($request->has('pagesize'))
+            $pagesize = $request->input('pagesize');
+        //我参与的圈子
+        $act_id = ActivityMember::where('users_id',$request->input('users_id'))->select('activities_id','status','role')->get();
+        $a_id = [];
+        foreach ($act_id as $val){
+            array_push($a_id,$val->activities_id);
+        }
+
+        $list = Activities_role_apply::join('activities','activities_role_apply.activities_id','=','activities.id')
+            ->join('users','activities_role_apply.users_id','=','users.id')
+            ->join('activities_role','activities_role.id','=','activities_role_apply.activities_role_id')
+            ->whereIn('activities_role_apply.activities_id',$a_id)
+//            ->orwhere('activities_role_apply.users_id',$request->input('users_id'))
+            ->select('users.headimg','users.name','users.sex','users.birthdate','activities.title','activities_role_apply.*','activities_role.name as rolename')
+            ->orderby('activities_role_apply.created_at','desc')
+            ->get();
+        foreach ($list as $val){
+            $val->btn_str = '';
+//            $val->content = '';
+            $val->age = 0;
+            if($val->users_id == $request->input('users_id')){
+                $val->age = 0;
+                $val->headimg = env('APP_LOGO');// "http://lstubu-img-app.oss-cn-shenzhen.aliyuncs.com/QQ20170822154133.png";
+                $val->title = env('APP_NAME');
+                $val->content = "您申请 ".$val->title.' 活动 '.$val->rolename.' 角色';
+                $val->btn_str = $val->is_pass == 0?'待审核':($val->is_pass ==1 ?'审核通过':'审核不通过');
+            }else{
+                $val->age = Common::birthday($val->birthdate);
+                $val->content = "申请 ".$val->title.' 活动 '.$val->rolename.' 角色';
+            }
+            if($val->is_pass == 0){
+//                $val->content = "您申请 ".$val->title.' 活动 '.$val->rolename.' 角色';
+                $val->btn_str = $val->is_pass == 0?'通过':'已审核';
+            }
+
+        }
+        return Common::returnSuccessResult('200', '获取成功', $list);
+    }
     /**
      * 我的审核消息
      */

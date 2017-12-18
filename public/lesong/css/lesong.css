@@ -1,0 +1,361 @@
+@charset "utf-8";
+/*.main { padding-bottom: 80px;}*/
+.ovfHiden{ overflow: hidden; height: 100%;}
+
+input[type=button]{
+    -webkit-appearance:none;
+    outline:none
+}
+
+
+/*大按钮样式*/
+.form-control{ width: 100%; margin: 15px 0px;line-height: 35px; border-radius: 5px; background: #fff;}
+.form-control input{ width: 80%;}
+.form-control i{ color: #999; padding: 0 10px;}
+.form-control.btn-control{ background: #118f00; color: #fff;}
+.form-control.btn-control input{ width: 100%; color: #fff; background: #118f00; font-size: 15px; font-weight: 500; letter-spacing: 3px; border: none;}
+input:active{ background-color:#00ff21; transform: translate(2px,2px); -webkit-transform: translate(2px,2px); /*Google*/ -moz-transform: translate(2px,2px);
+    /*Safari*/ -webkit-transform: translate(2px,2px); /*op*/}
+.form-control.btn-control.btn-white{ background: #fff; border-radius: 0px;}
+.form-control.btn-control.btn-white input{ background: #fff; color: #e62e2e;}
+
+
+
+
+.search-box{ position: relative; padding: 5px 5px 5px 5px; background: rgb(17,143,0); color: #fff;}
+/*.search-box a.site,.search-box a.mail{width: 12%;}*/
+
+.search-box a{padding: 0 5px; color:#fff; font-size: 15px; width: 10%;}
+.search-box a i{ font-size: 18px;}
+.search-box .search-input{ width: 80%; height: 30px; font-size: 14px; color: #fff;background: rgb(65,165,51); padding:0 5px; color: #fff;}
+
+/*筛选栏*/
+.nav { background: #fff; width: 100%; height:40px; clear: both;}
+.nav ul{position: relative;}
+.nav ul li { background: #fff;}
+.nav ul li{
+    float: left;
+    width: 25%;
+    text-align: center;
+    padding: 10px 0;
+}
+.nav ul li a{ font-weight: 500; color: #333; font-size: 14px;}
+.nav ul li.active a{ color: #118f00;}
+.nav ul li i{ color: #999;}
+.nav ul li.active i{color: #118f00;}
+/*.nav .panel .choose-pay,.nav .panel .choose-tag{ display: none;}*/
+.none{ display: none;}
+.show{ display: block;}
+.nav .panel{
+    display: table;
+    min-height: 70px;
+    background: #fff;
+    color: #999;
+    /*padding: 10px 20px;*/
+    z-index: 999;
+    position: relative;
+    width: 100%;
+}
+.nav .choose-tag,.nav .choose-pay{ padding: 20px 10px;}
+.nav .panel label{ padding: 3px 15px; border:1px solid #999; margin: 10px 8px; line-height: 30px;}
+.nav .panel label.active{ border:1px solid #118f00; color:#118f00;}
+/*筛选栏*/
+
+/*列表*/
+.act-list{ margin: 15px 0px;position: relative; width: 100%; height:auto; padding-bottom: 80px;}
+.act-list ul li{ margin: 10px 10px; border-radius: 5px; background: #fff; color: #999;}
+.act-list ul li a{color: #999;}
+.act-list ul li img{ width: 100%; height:auto; border-top-left-radius: 5px; border-top-right-radius: 5px;}
+.act-list ul li .act-content{ padding: 5px 10px; line-height: 25px;}
+.act-list ul li .act-content label.t-price{ position: absolute; right: 20px; color:#f07800;}
+.act-list ul li .act-content label.t-num{  position: absolute; right: 20px;}
+/*列表*/
+
+
+/*菜单*/
+.menu-bar{ position: fixed; bottom: 0px; height: 50px; width: 100%; clear: both; background: rgb(245,245,245);}
+.menu-bar ul li{
+    padding: 3px 0 5px 0;
+    float: left; width: 33.333%; text-align: center;}
+.menu-bar ul li{ line-height: 22px;}
+.menu-bar ul .act p.icon{ background: url(../images/menu-act.png) no-repeat; background-size: contain; background-position: center;}
+.menu-bar ul .act.active p.icon{ background: url(../images/menu-act-active.png) no-repeat; background-size: contain; background-position: center;}
+
+.menu-bar ul .me p.icon{ background: url(../images/menu-me.png) no-repeat; background-size: contain; background-position: center;}
+.menu-bar ul .me.active p.icon{ background: url(../images/menu-me-active.png) no-repeat; background-size: contain; background-position: center;}
+
+.menu-bar ul .create{ margin-top: 11px;}
+/*.menu-bar ul .create a{ }*/
+.menu-bar ul .create a i{ font-size: 58px;color: #118f00;}
+.menu-bar ul li.active p{ color: #118f00;}
+.menu-bar ul li p{ color: #999;}
+
+/*菜单*/
+
+/*input 样式*/
+::-webkit-input-placeholder{
+    color: #fff;}
+:-moz-placeholder {/* Firefox 18- */
+    color: #fff; opacity: 1;}
+::-moz-placeholder{/* Firefox 19+ */
+    color: #fff;
+    opacity:1;}
+:-ms-input-placeholder {
+    color: #fff;
+}
+
+
+/*活动详情页面*/
+.menu-bar div.options{ width: 60%;}
+.menu-bar div.options i{font-size:30px; line-height: 50px; color: #999;}
+.menu-bar div.options ul li.active i{ color: #118f00;}
+.menu-bar div.action-btn{ width: 40%; color: #fff;}
+.menu-bar div.action-btn input{ border: none; background: none; color: #fff; height: 50px; text-align: center; width: 100%; font-size: 18px; font-weight: 400;}
+.menu-bar div.action-btn input.btn-manager{ background: rgb(95,99,108);}
+.menu-bar div.action-btn input.btn-pay{ background: #118f00;}
+.menu-bar div.action-btn input.btn-label{ background: rgb(179,179,179);}
+.menu-bar div.action-btn input.btn-hanle{ background: rgb(94,98,107);}
+
+.act-body{  padding-bottom: 60px;}
+.act-body .row{ width: 100%; height: auto; margin-bottom: 15px; background: #fff;clear: both;}
+.act-body .row .container{ padding: 10px 15px 10px 20px; }
+.img-responsive{ width: 100%; height: auto;}
+.act-body .sign-in{ position: absolute; right: 20px; font-size: 13px; background: #118f00; color: #fff; padding:5px 10px; border-radius: 3px;}
+.act-body .collect{ position: absolute; right: 20px;}
+.act-body h2{ padding-left: 0px;}
+.act-body h2:before{
+    content: '   ';
+    position: absolute;
+    height: 15px;
+    width: 3px;
+    /*border-left: 3px solid #118f00;*/
+    background: #118f00;
+    margin-right: -20px;
+    left: 13px;
+    margin-top: 4px;
+    /*margin-: 10px;*/
+}
+.img-head{ width: 40px; height: 40px; border-radius: 40px;}
+.user-list{ background: #fff; height: 50px; line-height: 40px;}
+.user-list ul{ height: 50px;}
+.user-list ul li{ float: left; height: 50px; margin: 10px 7px 10px 0px;}
+.user-list a i{font-size:55px; color: rgb(232,232,232); font-weight:lighter;}
+/*.user-list ul li.icon-more{ text-align: right;}*/
+.user-list ul li.icon-more-list a i{ font-size:16px;}
+.act-body .row p{ color: #999; line-height: 30px;}
+
+.act-body .row .text-content{ overflow: hidden;}
+.act-body .row p.long-hide{ text-align: center; line-height: 50px;}
+.act-body .row .long-hide i{ font-size: 12px; color: #999;}
+.act-body .act-date ul{ height: 40px;}
+.act-body .act-date ul li{
+    float: left;
+    width: 48%;
+}
+.act-body .act-date{
+    padding-top:30px;
+    padding-bottom: 20px;
+}
+.act-body .act-date ul li:last-child{
+    border-left: 1px solid rgb(232,232,232);
+    padding-left: 10px;
+}
+.act-body .act-date:before{
+    content: '';
+    width: 100%;
+    left:0;
+    height: 10px;
+    border-top: 1px solid rgb(232,232,232);
+    position: absolute;
+    /*background: #999;*/
+    margin-top: -15px;
+}
+.act-leader{ padding: 10px 0px; height: 60px; line-height: 60px; }
+.act-leader:after{
+    content: '';
+    width: 100%;
+    left:0;
+    height: 10px;
+    border-top: 1px solid rgb(232,232,232);
+    position: absolute;
+    margin-top: 60px;
+    /*background: #999;*/
+    /*margin-top: -15px;*/
+}
+.act-leader a{ font-size: 15px; line-height: 50px; padding: 0px 5px; margin-bottom: 10px; position: relative;}
+
+
+.act-body .act-star{ padding-bottom: 20px;}
+.act-body .act-star i{ color: #f07800; font-size: 15px;}
+
+
+/*菜单*/
+.menu{ text-align: center;}
+.float-menu-body{
+    overflow: hidden;
+    left: 0;
+    top: 0;
+    position: fixed;
+    width: 100%; height: 100%; z-index: 1000; background: #fff;
+    opacity: 0.9;}
+.float-menu-body .menu-list{
+    width: 100%;
+    height: 300px;
+    position: fixed;
+    bottom: 80px;
+}
+.float-menu-body .menu-items{
+    position: fixed;
+    right: 0;
+    bottom: 105px;
+    /*width: 50%;*/
+    height: 300px;
+}
+.float-menu-body .menu-list .menu-items img{
+    width: 40px;
+    height:40px;
+}
+.float-menu-body .menu-items li{
+    width: 35px; height: 55px; line-height: 0px; color: rgb(51,51,51); font-weight: 700;
+    position: fixed;
+    text-align: right;
+}
+.float-menu-body .menu-items li a{
+    width: 30px;
+    height: 30px;
+    /*padding-top: 10px;*/
+    padding: 7px 5px;
+    /*background: #fff;*/
+    border-radius: 30px;
+    line-height: 30px;
+}
+.float-menu-body .menu-items li i{
+    color: #118f00;
+    font-size:20px;
+}
+
+
+/*任务认领*/
+.main-role .container{ padding: 5px 20px;}
+.button-xl{ position: absolute; bottom: 20px; text-align: center; width: 90%;left: 20px; background: #118f00; line-height: 40px; border: none; border-radius: 5px; color: #fff; font-size: 16px;}
+/*.main-role .button-xl a{ width: 100%; text-align: center; background: #118f00;}*/
+.role-list li { float: left; line-height: 30px; width: 80px; height: 30px; background:#999; margin:15px 15px 15px 0px; text-align: center;border-radius: 15px;}
+
+.role-list li a{  color: #fff; }
+.role-list li.active{ background: #118f00;}
+
+.role-message{ position: absolute; width: 100%; top:40%; text-align: center;}
+
+/*活动成员列表页面*/
+.act-user{background: #fff; padding: 0px 10px 70px 10px;}
+.act-user .search-box { background: #fff; width: 100%; padding: 5px 0px; position: relative;}
+.act-user .search-box .search-input{ width: 97.5%; background: rgb(240,240,240); color: #999;}
+.act-user .user-items ul li{
+    width: 100%;
+    padding: 35px 0px;
+    color: #999;
+    clear: both;
+}
+.act-user .user-items ul li:after{
+    content: '';
+    position: absolute;
+    left:0;
+    background: rgb(242,242,242);
+    height: 1px;
+    width: 100%;
+    margin-top: 80px;
+    /*margin-bottom: 10px;*/
+}
+.act-user .user-items a{ color: #999; margin-top: 10px;}
+.act-user .user-items ul li div{ float: left;}
+.act-user .user-items ul li img{border-radius: 60px; width: 60px;height: 60px;}
+.act-user .user-items ul li .user-content{ padding-left: 10px; line-height: 30px;}
+.act-user .user-content .telphone{ position: absolute; right: 10px; font-size: 15px;}
+.act-user .user-content .username{ font-size: 15px;}
+.tag-sex-female{ background: #e62e2e; color: #fff; padding:1px 5px; border-radius: 10px; font-size: 12px;}
+.tag-sex-male{ background: #f07800; color: #fff; padding:1px 5px; border-radius: 10px; font-size: 12px;}
+.tag-sex-female i,.tag-sex-male i{color: #fff;}
+.tag-identity{ background: #fff; border: 1px solid #999; color: #999; border-radius: 10px; padding: 1px 5px;}
+
+
+/*消息*/
+.message{ background: #fff;}
+.message .msg-items{ padding: 0px 10px;
+    clear: both;}
+.message .msg-items ul li{ width: 100%;  clear: both; padding: 20px 0px; color: #000; border-bottom: 1px solid rgb(242,242,242); height: 55px;}
+.message .msg-items ul li div{ float: left;}
+.message .msg-items ul li img{border-radius: 50px; width: 50px;height: 50px;}
+.message .msg-items ul li .msg-header{ line-height: 50px; padding-left: 10px; font-size: 15px;}
+.message .msg-items ul li .msg-header .link-url{ position: absolute; right: 10px; width: 30px; text-align: right; margin-top: -50px;}
+.message .msg-items ul li .msg-header .icon-red-dot:before{ content:" "; background: #e62e2e; width: 6px; height: 6px;
+    border-radius: 6px; position: absolute; top:50%;left: 50%; margin-left: -15px; margin-top: -3px;}
+
+
+.message .msg-items .user-content{ padding-left: 10px; line-height: 30px;}
+.message .msg-items .user-content .username{ font-size: 15px; padding-right: 10px;}
+.message .msg-items .user-content .btn{ position: absolute; right: 10px; padding: 0px 15px;  line-height: 24px; color: #999; margin-top: 3px;}
+.message .msg-items .user-content .btn.btn-pass{
+    border: 1px solid #999;
+}
+.user-home{ padding-bottom: 120px; background: #fff;}
+.user-home .header{
+    width: 100%;
+    background: #118f00;
+    padding: 30px 0px 50px 0px;
+}
+.header h1{ color: #fff;}
+.header .tab{ text-align: right; padding: 0px 20px;}
+.header .tab a{ padding:0 5px;}
+.header .tab a i{ font-size: 18px;}
+.header .userinfo{ padding: 30px 20px; height: 30px;}
+.header .userinfo .u-0{ position: absolute;  left:20px;}
+.header .userinfo .u-1{ position: absolute;  left:100px;}
+.header .userinfo .u-2{ position: absolute; right: 20px; line-height: 40px;}
+
+.nav-lists{
+    padding: 20px 20px;
+    clear: both;
+    color: #999;
+}
+.nav-lists h3{ font-weight:500; color:#999; line-height: 30px;}
+.nav-lists h3:before{ content: ''; width: 100%; height: 1px; background: rgb(245,245,245); position: absolute; left:0px;}
+.nav-lists h3:after{ content: ''; width: 100%; height: 1px; background: rgb(245,245,245); position: absolute; margin-top: 30px; left: 0px;}
+
+.nav-lists ul li{ float: left; width: 25%; text-align: center; padding: 15px 0px;}
+.nav-lists ul li p{ line-height: 30px;}
+.nav-lists.nav-green ul li i{ color: #118f00;}
+.nav-lists ul li i{ font-size: 35px; color: #999;}
+
+/*登陆页面*/
+.login { background: url('../images/login-bg.png'); background-repeat: no-repeat; background-position: center; background-size: cover; height: 100%;}
+.login h1.title{ color: #fff; font-size: 35px; font-weight: 300; top: 20%; position: absolute; left: 50%; width: 300px; margin-left: -150px;}
+.login .login-box{ position: absolute; top:30%; width: 90%; margin-left: -45%; left: 50%;}
+
+.login-box a{ color: #fff; font-size: 14px; letter-spacing: 3px;}
+
+.login .other-login{ position: absolute; top: 70%; width: 90%; margin-left: -45%; left: 50%; height: 30%;}
+.login .other-login .op-line:before{ content:''; position: absolute; width: 100px; background: #fff; height: 1px; left: 0px; top: 8px;}
+.login .other-login .op-line:after{ content:''; position: absolute; width: 100px; background: #fff; height: 1px; right: 0px; top: 8px;}
+.login .other-login .login-logo{ padding: 40px 0px;}
+.login .other-login .login-logo a img{ width: 30px ; height: 30px; margin: 0px 20px;}
+.login .other-login ul{ position: absolute; bottom: 20px; width: 100%;}
+.login .other-login ul li{ width: 50%; float: left; text-align: center;}
+.login .other-login ul li a{ color: #fff; font-size: 15px;}
+.login .other-login ul li.left-line:before{
+    content: '';
+    width: 1px;
+    height: 20px;
+    position: absolute;
+    background: #fff;
+    left:50%;
+}
+
+
+/*设置签到规则*/
+.sign-rule{ background: rgb(245,245,245); color: #999;}
+
+.container .row{ padding: 15px 10px; border-bottom: 1px solid rgb(230,230,230);background: #fff; color: #999;}
+.container .row .row-r-data{ color: #118f00; position: absolute; right: 30px;}
+.container .row .row-r-icon{ color: #999; position: absolute; right: 10px;}
+.container .row i{color: #999;}
+.container .title-row{ background: rgb(245,245,245); padding: 10px 10px;}

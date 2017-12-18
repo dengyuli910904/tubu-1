@@ -154,6 +154,8 @@ $api->version('v1',function($api){
 		$api->get('/applymsg','UsersController@applymsg');
 		//我的通知消息
 		$api->get('/systemmsg','UsersController@systemmsg');
+		//我的角色认领消息
+        $api->get('/rolemsg','UsersController@rolemsg');
 
 		//修改用户信息-电话 code,code_id,phone
 		$api->put('/tel','UsersController@alter_tel');

@@ -112,6 +112,7 @@ class ActivitiesController extends Controller
             $activity->limit_count = $request->input('limit_count');
             $activity->keywords = $request->input('keywords');
             $activity->comment = $request->input('comment');
+            $activity->add_way = 1;
             if($activity->save()){
                 return Redirect::back();
             }else{

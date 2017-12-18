@@ -11,7 +11,9 @@ use App\Models\ActivityMember;
 use App\Libraries\Common;
 use App\Models\ActivitiesCollect;
 // use App\Models\Groups;
+use App\Models\Activities_sign;
 use UUID;
+use App\Models\Activities_sign_rule;
 
 class ActivitiesController extends Controller
 {
@@ -27,7 +29,13 @@ class ActivitiesController extends Controller
             $pagesize = $request->input('pagesize');
 
     	$list = Activities::where('is_able','=','1')
-            ->where('status','<>','0')
+            ->where(function($query) use ($request){
+                $query->where('status','<>','0');
+                if($request->has('users_id')){
+                    $query->orwhere('users','=',$request->input('users_id'));
+                }
+
+            })
             ->where(function($query) use($request){
                 //searchtxt
                 if($request->has('searchtxt')){
@@ -106,13 +114,15 @@ class ActivitiesController extends Controller
      * 获取活动详情
      */
     public function show(Request $request){
+        $users_id = $request->input('users_id');
+
     	$activity = Activities::find($request->input('id'));
     	if(!empty($activity)){
             // $activity->content = htmlspecialchars($activity->content);
             // $activity->text = $activity->content;
             $groups = Groups::find($activity->groups_id);
             $activity->status_text = '待发布'; //结束活动
-            if($groups){
+            if($activity){
                 switch ($activity->status) {
                     case 1:
                         $activity->status_text = '报名中'; //正式发布状态
@@ -134,11 +144,18 @@ class ActivitiesController extends Controller
                 $data['activityinfo'] = $activity;
                 $data['groupsinfo'] = array('name'=>$groups->name,'score'=>$groups->score);
 
-                $owner = Users::select('id','name','headimg','birthdate','sex','telphone')->find($groups->users_id);
+                $owner = Users::select('id','name','headimg','birthdate','sex','telphone')->find($activity->users_id);
                 if(!$owner){
                     $owner = [];
                 }
+                $data['set_sign_rule'] = false;
+                $data['user_act_role'] = 0; //该用户跟活动没有关系
+                if($owner->id == $users_id){
+                    $data['user_act_role'] = 1; //该用户是创建者
+                    $data['set_sign_rule'] = true;
+                }
                 $data['leaderinfo'] = $owner;
+
                 $idlist = ActivityMember::where('activities_id','=',$request->input('id'))->select('users_id','role')->get();
                 $deputyid = [];
                 $memberid = [];
@@ -146,11 +163,18 @@ class ActivitiesController extends Controller
                     switch ($value->role) {
                         case 0:
                             array_push($memberid, $value->users_id);
+                            if($value->users_id == $users_id){
+                                $data['user_act_role'] = 3; //该用户为该活动的成员
+                            }
                             // $memberid = $memberid.$value->users_id.',';//($key === (count($idlist)-1)?'':',');
                             break;
                         
                         case 1:
                             array_push($deputyid, $value->users_id);
+                            if($value->users_id == $users_id){
+                                $data['user_act_role'] = 2; //该用户为副领队
+                                $data['set_sign_rule'] = true;
+                            }
                             // $deputyid = $deputyid.$value->users_id.',';//($key === (count($idlist)-1)?'':',');
                             break;
                     }
@@ -177,6 +201,7 @@ class ActivitiesController extends Controller
 
                 $member = ActivityMember::where('users_id',$request->input('users_id'))->where('activities_id',$request->input('id'))->first();
                 $data['is_sign_in'] = false;
+                $data['is_check_in'] = 0;//没有权限参与签到
                 $data['is_pay'] = false;
                 if((float)$activity->cost <= 0){
                     $data['is_pay'] = true;
@@ -186,8 +211,24 @@ class ActivitiesController extends Controller
                     if($member->is_pay == 1 || $activity->pay_type == 3){
                         $data['is_pay'] = true;
                     }
-                    $data['is_sign_in'] = true;
+                    $data['is_sign_in'] = true; //用户已经报名活动
+                    $data['is_check_in'] = 1;//有权限参与签到
                 }
+                $sign_rule = Activities_sign_rule::where('activities_id',$request->input('id'))->first();
+                if($sign_rule){
+                    $data['signinfo'] = $sign_rule;
+                    $sign = Activities_sign::where('activities_id',$request->input('id'))->where('users_id',$request->input('users_id'))->first();
+
+                    if($sign){
+                        $data['is_check_in'] = 2; //已经签到
+                    }
+//                    else{
+//                        $data['is_check_in'] = 0; //还未发起签到
+//                    }
+                }else{
+                    $data['signinfo'] = array('id' =>0);
+                }
+
 
 
                 return Common::returnResult('200','查询成功',$data);

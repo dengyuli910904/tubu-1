@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\API_V2;
 
+use App\Models\Activities_role_apply;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Activities_sign_rule;
+use Illuminate\Support\Facades\Redirect;
 use UUID;
 use App\Libraries\Common;
+use App\Models\Activities;
 
 class ActivitiesSignRuleController extends Controller
 {
@@ -34,9 +37,16 @@ class ActivitiesSignRuleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+//        return $request;
+        if(!$request->has('id')){
+            return Redirect::back();
+        }
+        $data['id'] = $request->input('id');
+        $rule = Activities_sign_rule::where('activities_id',$request->input('id'))->first();
+        $data['rule'] = $rule;
+        return view('lesong.act.sign',['data' => $request->all()]);
     }
 
     /**
@@ -47,6 +57,10 @@ class ActivitiesSignRuleController extends Controller
      */
     public function store(Request $request)
     {
+        $act = Activities::find($request->input('activities_id'));
+        if(!$act){
+            return Common::returnResult(400,'该活动记录不存在','');
+        }
         $rule = Activities_sign_rule::where('activities_id',$request->input('activities_id'))->first();
         if(!$rule)
         {
@@ -57,6 +71,8 @@ class ActivitiesSignRuleController extends Controller
         $rule->deadline = $request->input('deadline');
         $rule->publishway = $request->input('publish_way');
         $rule->publish_num = $request->input('publish_num');
+        $rule->lng = $request->input('lng');
+        $rule->lat = $request->input('lat');
         $result = $rule->save();
         if($result){
             return Common::returnResult(200,'设置成功','');

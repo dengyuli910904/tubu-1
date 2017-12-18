@@ -25,14 +25,13 @@ class Activities extends Model
     /**
      * 查询活动列表
      */
-    public static function  act_list($wheres,$orderBy,$skip = 0,$pagesize = 10){
-//        return $wheres;
-        $data = self::where($wheres)
+    public static function  act_list($act,$orderBy,$skip = 0,$pagesize = 10){
+        $data = $act//::where($wheres)
         ->skip($skip)
         ->take($pagesize)
         ->select('id','cover','title','starttime','endtime',
                      'enrol_starttime','enrol_endtime','cost','limit_count','participation_count',
-                     'apply_count','status','keywords','created_at')
+                     'apply_count','status','keywords','created_at','pay_type')
         ->orderBy($orderBy,'desc')
         ->get();
 //            self::where(array("status"=>["<>","0"]))->orderBy($orderBy)->skip($skip)->take($pagesize)->get();

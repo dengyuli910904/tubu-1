@@ -45,47 +45,10 @@ class AcitivityMemberController extends Controller
         ->orderby('role','desc')
         ->select('activitymembers.role','u.name','u.telphone','u.headimg','u.sex','u.birthdate')
         ->get();
-        // $owner = Users::select('name','telphone','headimg','sex','birthdate')->find($act->users_id);
-        // return $owner;
-        // if($owner){
-        //     $owner->role = 2; //领队，活动创建人
-        //     // array_push(array, var)
-        //     // return $owner;
-        //     // array_merge($list, $owner);
-        //     // return $list;
-        // }
         foreach ($list as $val) {
             // echo $val->birthdate;
             $val->age = Common::birthday($val->birthdate);
         }
-        // $memberid = '';
-        // $deputyid = '';
-        // // return $list;
-        // foreach ($list as $key => $value) {
-        //     // echo $value;
-        //     switch ($value->role) {
-        //         case 0:
-        //             $memberid = $memberid.$value->users_id.',';
-        //             break;
-                
-        //         case 1:
-        //             $deputyid = $deputyid.$value->users_id.',';
-        //             break;
-        //     }
-        // }
-        // // return $memberid;
-        // $deputys = [];
-        // $members = [];
-        // if(!empty($deputyid)){
-        //     $deputys = Users::query(' where id in ('.$deputyid.')')->get();
-        // }
-        
-        // $data['deputys'] = $deputys;//副领队列表
-        // if(!empty($memberid)){
-        //     $members = Users::query('where id in ('.$memberid.')')->get();
-        // }
-        
-        // $data['members'] = $members;//普通成员列表
         return Common::returnResult('200','查询成功',$list);
     }
 
@@ -129,15 +92,17 @@ class AcitivityMemberController extends Controller
         $member->role = 0;
         $member->users_id = $request->input('users_id');
         $member->comment = $request->input('comment');
+        $act->apply_count = (int)$act->apply_count +1;
+
+        $need_pay = false;
+        if($act->cost >0){
+            $need_pay = true;
+        }else{
+            $member->is_pay = 1;
+            $act->apply_count = (int)$act->participation_count +1;
+        }
         if($member->save()){
-            $act->apply_count = (int)$act->apply_count +1;
-            
-            $need_pay = false;
-            if($act->cost >0){
-                $need_pay = true;
-            }else{
-                $act->apply_count = (int)$act->participation_count +1;
-            }
+
             $act->save();
             return Common::returnResult('200','参与成功',['need_pay'=>$need_pay,'num'=>$act->cost]);
         }else{

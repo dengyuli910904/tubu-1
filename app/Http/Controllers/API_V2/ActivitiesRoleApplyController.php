@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Activities_role_apply;
 use Illuminate\Http\Request;
 use App\Libraries\Common;
+use Illuminate\Support\Facades\Redirect;
 use UUID;
 use App\Models\Activities;
+use App\Models\Activities_role;
+use App\Models\ActivityMember;
 
 class ActivitiesRoleApplyController extends Controller
 {
@@ -16,9 +19,14 @@ class ActivitiesRoleApplyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if($request->has('id')){
+
+            return view('lesong.act.role',['data' => $request->all()]);
+        }else{
+            return Redirect::back();
+        }
     }
 
     /**
@@ -39,7 +47,16 @@ class ActivitiesRoleApplyController extends Controller
      */
     public function store(Request $request)
     {
-        $act = Activities::where('id',$request->input('activities_id'))->first();
+        $act_role = ActivityMember::where('activities_id',$request->input('activities_id'))->where('users_id',$request->input('users_id'))->first();
+        // Activities::where('id',$request->input('activities_id'))->first();
+        if(!$act_role){
+            return Common::returnResult(204,'您还未参与该活动','');
+        }else{
+            if($act_role->is_pay == 0){
+                return Common::returnResult(204,'请先支付参与活动的费用','');
+            }
+        }
+        
         $apply = Activities_role_apply::where('activities_id',$request->input('activities_id'))->where('users_id',$request->input('users_id'))->first();
         if($apply)
             return Common::returnResult(203,'您已进行过该活动的任务认领','');
@@ -87,10 +104,14 @@ class ActivitiesRoleApplyController extends Controller
      */
     public function update(Request $request)
     {
-        $apply = Activities_role_apply::where('activities_id',$request->input('activities_id'))->where('users_id',$request->input('users_id'))->find();
+        $apply = Activities_role_apply::where('activities_id',$request->input('activities_id'))->where('users_id',$request->input('users_id'))->first();
         if(!$apply)
             return Common::returnResult(404,'该用户没有申请记录','');
-        $is_pass = $request->inpu('status') ?1:2;
+        $status = 1;
+        if($request->has('status')){
+            $status = $request->input('status');
+        }
+        $is_pass = $status;
         $apply->is_pass = $is_pass;
         $result = $apply->save();
         if($result)
@@ -108,5 +129,33 @@ class ActivitiesRoleApplyController extends Controller
     public function destroy(Activities_role_applyController $activities_role_applyController)
     {
         //
+    }
+
+    /**
+     * find someone's role of the activity
+     * @param Request $request
+     */
+    public function userhasrole(Request $request){
+        if($request->has('users_id') && $request->has('id')){
+            $data = $request->all();
+            $role = Activities_role::where('activities_id',$data['id'])->where('users_id',$data['users_id'])->select('activities_role_id')->first();
+            if(!$role){
+                //用户还没有角色
+                $apply = Activities_role_apply::where('activities_id',$data['id'])->where('users_id',$data['users_id'])->select('activities_role_id','is_pass')->first();
+                if(!$apply){
+                    $result['role_status'] = -1;//还未申请过
+                }else{
+                    $result['apply'] = $apply;
+                    $result['role_status'] = $apply->is_pass; //申请了，审核状态中
+                }
+            }else{
+                //用户已经承担了角色
+                $result['role'] = $role;
+                $result['role_status'] = -2; ////用户已经承担了角色
+            }
+            return Common::returnResult(200,'查询成功',['data' => $result]);
+        }else{
+            return Common::returnResult(400,'参数错误','');
+        }
     }
 }
